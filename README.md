@@ -70,3 +70,16 @@ PostgreSQL was chosen because
 
 ### R10 Describe the way tasks are allocated and tracked in your project
 ---
+
+### References
+---
+References
+
+- Australian Institute of Health and Welfare (2023). Social Isolation and Loneliness - Australian Institute of Health and Welfare. [online] Australian Institute of Health and Welfare. Available at: https://www.aihw.gov.au/reports/australias-welfare/social-isolation-and-loneliness.
+
+- Cotten, E. (2023). The Decline of Friendships and How It’s Shaping Society. [online] Newswritingsports. Available at: https://medium.com/newswritings/the-decline-of-friendships-and-how-its-shaping-society-e87687ec15f1 [Accessed 6 Dec. 2023].  
+
+- WHO (2022). COVID-19 pandemic triggers 25% increase in prevalence of anxiety and depression worldwide. [online] World Health Organization. Available at: https://www.who.int/news/item/02-03-2022-covid-19-pandemic-triggers-25-increase-in-prevalence-of-anxiety-and-depression-worldwide. 
+
+- World Health Organization (2022). The impact of COVID-19 on mental health cannot be made light of. [online] www.who.int. Available at: https://www.who.int/news-room/feature-stories/detail/the-impact-of-covid-19-on-mental-health-cannot-be-made-light-of. 
+‌
