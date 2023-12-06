@@ -3,11 +3,9 @@
 
 ### Installation and Setup
 
-
-
-
+--
 ### R1 Problem Identification
-
+--
 If you’ve ever played social team sports, you’ll know how tough it can be to get everyone to communicate whether they’re available each week. There are a few reasons for this, apart from the obvious heel-draggers who will always cause team admins to pull their hair out, there’s no easy way to create and manage a team for social sports leagues. 
 
 Some simple solutions use social media to create polls or ask for a show of hands so to speak. Then there’s the old method of starting a group chat and texting everyone days before the game. All of these solutions are cumbersome and require tedious management. There could be a more effective solution for something that seems quite simple. 
@@ -23,11 +21,9 @@ This app aims to address the following problems:
 - Attendance Tracking and Player Availability: Keeping track of who is attending upcoming games is vital for ensuring that games can go ahead. The app could allow players to RSVP to games and provide visibility to others on who will be attending.
 
 - Scorekeeping: For league organisers interested in tracking progress and performance, the app could offer scorekeeping for teams.
-
- 
-
+--
 ### R2 Why is it a problem that needs solving?
-
+--
 The challenges associated with organising and managing pick-up sports teams and leagues are significant problems. 
 
 - Anxiety and Depression: Even 3 and a half years after the pandemic first hit, concerns about mental health and substance abuse have been elevated. According to the World Health Organisation (June 2022), “Young people have been left vulnerable to social isolation and disconnectedness which can fuel feelings of anxiety, uncertainty and loneliness and lead to affective and behavioural problems.” Regular exercise is proven to be effective in reducing anxiety and depressive symptoms by releasing endorphins and serotonin which can improve mode.
@@ -50,23 +46,36 @@ The challenges associated with organising and managing pick-up sports teams and 
 
 Solving these problems is essential for making sports more accessible, enjoyable, and safe, while also promoting health, fitness, and community engagement. The Team Builder app has the potential to significantly enhance the experience of participating in local sports, making it a valuable tool for individuals and communities alike. On the other hand, it provides beneficial management for administrators who need to deal with large sets of data.
 
-
+--
 ### R3 Why have you chosen this database system. What are the drawbacks compared to others?
-
+--
 PostgreSQL was chosen because ...
-
+--
 ### R4 Identify and discuss the key functionalities and benefits of an ORM
+--
 
-T
-
+--
 ### R5 Document all endpoints for your API
+--
 
+--
 ### R6 An ERD for your app
+--
 
+--
 ### R7 Detail any third party services that your app will use
+--
 
+--
 ### R8 Describe your projects models in terms of the relationships they have with each other
+--
 
+--
 ### R9 Discuss the database relations to be implemented in your application
+--
 
+--
 ### R10 Describe the way tasks are allocated and tracked in your project
+--
+
+--
