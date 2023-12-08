@@ -77,6 +77,51 @@ https://www.sql-easy.com/learn/how-to-scale-postgresql/#:~:text=Understanding%20
 ---
 ### R4 Identify and discuss the key functionalities and benefits of an ORM
 
+Object Relational Mapping is a programming technique that allows data to be mapped between a relational database system and an OOP language such as Python. It allows data objects to be stored in a programming language such as JSON while the stored data is queried in the RDBMS using SQL. 
+
+ORM systems provide APIs that abstract details of how data is stored in the RDBMS. This is useful as it allows developers to define classes that map to tables. These classes can also be used to manipulate the stored data without having to write SQL statements directly.
+
+Key Functionalities of ORM:
+
+- Abstraction: ORM is based on the idea of Abstraction. The ORM mechanism makes it possible to address, access and manipulate objects without having to consider how those objects relate to their data sources. In other words, ORMs abstract the data layer, allowing developers to interact with databases using high-level entities such as classes and objects rather than SQL queries.
+
+- CRUD Operations: ORM provides a simple interface for performing basic Create, Read, Update, and Delete (CRUD) operations on database records without requiring SQL syntax. ORM provides a simple interface for performing basic Create, Read, Update, and Delete (CRUD) operations on database records without requiring SQL syntax.
+
+- Data Mapping: It automatically maps application objects to database tables and vice versa, reducing the need for manual data entry and retrieval.
+
+- Relationship Management: ORM tools manage relationships between objects (like one-to-one, one-to-many, and many-to-many) seamlessly, which are otherwise complex to handle in relational databases.
+
+- Query Capabilities: They offer a way to execute complex queries using the object-oriented language, which can be more intuitive than SQL for some developers.
+
+- Transaction Management: Most ORMs provide a way to manage transactions, ensuring data integrity and consistency.
+
+
+- Caching: Many ORMs include built-in caching capabilities, improving performance by reducing the number of queries made to the database.
+
+Benefits of using an ORM:
+
+- Productivity and Efficiency: ORM systems help developers focus on app development and business logic rather than spending a lot of effort on the database. Abstracting the database operations saves developers time and effort in writing boilerplate code and database connection management.
+
+- Maintainability:  High-level abstractions make the code more readable and maintainable. It’s easier to modify and extend object-oriented code than complex SQL statements.
+
+- Reduces Code Complexity: Creating complex SQL queries can be challenging when it involves multiple tables, joins, and subqueries. ORM systems simplify this process by providing an intermediate layer that allows developers to work with data in a programming language without being concerned with the underlying database schema. This can reduce code complexity which in the long run, makes code maintenance easier.
+
+- Promotes Code Reusability: Separating the application logic from the database promotes code reusability. This means that the same code can be reused for different database systems without worrying about specific SQL syntax, thus reducing code duplication while promoting modular architecture.
+
+- Enhances Security: ORM systems provide built-in security features that help prevent security vulnerabilities such as SQL injection attacks. These frameworks are designed to automatically sanitise user input before it's transmitted to the database, effectively safeguarding against harmful input that could compromise the database. Furthermore, ORM (Object-Relational Mapping) systems enable developers to establish specific permissions and access control policies, contributing to the prevention of unauthorised access to confidential data.
+
+- Improves Performance: Object-relational mapping (ORM) systems enhance efficiency by decreasing the frequency of database queries needed for data retrieval. Through strategies like lazy loading and caching, these systems can lessen the volume of queries dispatched to the database, thereby cutting down on network delay. Moreover, they are capable of fine-tuning queries by formulating the most effective SQL statements tailored to the particular database system in operation.
+
+- Provides Database Independence: ORM systems enable code compatibility with different databases, simplifying transitions and requiring fewer code changes. This also facilitates testing across databases to identify performance issues.
+
+Overall, ORMs provide a powerful, high-level approach to database interactions, significantly enhancing developer productivity and code maintainability.
+
+Sources
+
+https://www.spiceworks.com/tech/data-management/articles/what-is-orm-a-comprehensive-guide-to-object-relational-mapping/#:~:text=Improves%20productivity 
+
+https://www.theserverside.com/definition/object-relational-mapping-ORM 
+
 ---
 ### R5 Document all endpoints for your API
 
@@ -94,14 +139,29 @@ https://www.sql-easy.com/learn/how-to-scale-postgresql/#:~:text=Understanding%20
 ---
 ### R9 Discuss the database relations to be implemented in your application
 
+
 ---
 ### R10 Describe the way tasks are allocated and tracked in your project
+
+## [Trello Board Link](https://trello.com/b/tE3trBbi/team-builder)
+
+### Daily Standups:
+
+![standup 01](./docs/daily-standups/standup_01.jpg)
+
+### Trello Board: 
+
+![trello 01](./docs/trello-board/trello_01.jpg)
+
+### GitHub Commits:
 
 ---
 ### References
 
 ---
 References
+
+- Amazon Web Services, Inc. (n.d.). What is MongoDB? – Non-relational Database. [online] Available at: https://aws.amazon.com/documentdb/what-is-mongodb/.
 
 - Australian Institute of Health and Welfare (2023). Social Isolation and Loneliness - Australian Institute of Health and Welfare. [online] Australian Institute of Health and Welfare. Available at: https://www.aihw.gov.au/reports/australias-welfare/social-isolation-and-loneliness.
 
