@@ -56,7 +56,7 @@ Solving these problems is essential for making sports more accessible, enjoyable
 ---
 ### R3 Why have you chosen this database system. What are the drawbacks compared to others?
 
-I’ve chosen to use the PostgreSQL database management system for my application due to its extensibility, support for complex data types, and scalability. The app must be using a database that offers support for future expansion, upgrades and additional features. PostgreSQL offers catalogue-driven operation which provides additionally stored information in the PostgreSQL catalogue. This is important due to the app requires different data types within our tables. The app will also require different functions which PostgreSQL has extensible support for. In future, expansion will be necessary for added features such as an online socialisation aspect, and a payment system for player and team registration. Postgres can also handle large amounts of data and concurrent users efficiently, making it suitable for scalable web and mobile applications. The app will be built with the expectation of a large database of users and teams. Due to the expanding database requirements, PostgreSQL will be well-suited. 
+I’ve chosen to use the PostgreSQL database management system for my application due to its extensibility, support for complex data types, and scalability. The app must be using a database that offers support for future expansion, upgrades and additional features. PostgreSQL offers catalogue-driven operation which provides additionally stored information in the PostgreSQL catalogue. This is important due to the app requiring different data types within our tables. The app will also require different functions which PostgreSQL has extensible support for. In future, expansion will be necessary for added features such as an online socialisation aspect, and a payment system for player and team registration. Postgres can also handle large amounts of data and concurrent users efficiently, making it suitable for scalable web and mobile applications. The app will be built with the expectation of a large database of users and teams. Due to the expanding database requirements, PostgreSQL will be well-suited. 
 
 When comparing PostgreSQL to MongoDB we find some advantages:
 
@@ -125,6 +125,30 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 ---
 ### R5 Document all endpoints for your API
 
+Sport:
+- POST create sport (admin)
+- PUT update sport (admin)
+- DELETE sport (admin)
+
+League:
+- POST create league (admin)
+- PUT update league (admin)
+- DELETE league (admin)
+
+User:
+- UPDATE user (user)
+- CREATE user (user)
+- POST user sign-in (user)
+
+Team:
+- PUT update team rank (admin)
+- POST user to team (captain)
+- PATCH user starting (captain)
+- DELETE user (captain)
+- GET team users (captain)
+- GET starting users (captain)
+- GET single user (captain)
+
 ---
 ### R6 An ERD for your app
 
@@ -133,12 +157,34 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 ---
 ### R7 Detail any third party services that your app will use
 
+**Flask** is used to form the underlying framework for the API. It provides a built-in development server and debugging, used to define the routes of our backend app. It is used to create the view functions which is useful for returning JSON objects.  
+
+**SQLAlchemy** is an extension of Flask used for ORM interactions. It defines models in the API. It interacts with the SQL database with the use of Python classes instead of writing raw SQL queries. It maps the classes to database tables with rows in these respective tables. This layer of abstraction allows interaction with the database. SQLAlchemy also defines the relationship between models such as one-to-many or many-to-many.
+
+**Marshmallow** is a library for Python used for object serialization and deserialization. It is especially useful in scenarios like turning complex data types, such as objects from ORM (Object-Relational Mapping) or complex Python data structures, into JSON format, and vice versa. It’s used for schema definition, nesting objects, and validation within the API.
+JWT Manager adds support for JSON Web Tokens (JWTs) with the Flask app. It handles the authentication and authorisation with the use of decorators in our functions. It creates tokens within the authorisation header that help add a layer of security for data access, retrieval and user log-in.
+
+**Psycopg2** enables Python applications to connect to PostgreSQL databases. It executes SQL queries and manages transactions. The module supports key PostgreSQL features.
+
+**Bcrypt** is a password-hashing function used to build a cryptographically secure hash of a user’s password. It provides resistance against brute-force attacks and ensures that each password is uniquely hashed, significantly reducing the risk of compromising password security.
+
+**PostgreSQL** is an open-source relational database management system used to store information for the API. It facilitates complex queries and foreign keys and It offers a wide range of features to safely store and scale complicated data workloads.
+
 ---
 ### R8 Describe your projects models in terms of the relationships they have with each other
 
 ---
 ### R9 Discuss the database relations to be implemented in your application
 
+In Team Builder, I’ve created a relational database named “teamup”. It consists of tables labelled users, leagues, teams and sports. These tables form a relational database that establishes table connections and removes any data redundancies. It facilitates dynamic back-end connections for user-facing data manipulation and retrieval. 
+
+Users: The “users” table stores personal information, relationships with other entities, and important data types which allow the system to determine levels of user access and interactivity.
+
+Teams: The “teams” table forms the fundamental relationship with nearly all other database tables. It unifies users to form teams, while also forming important relationships with the front-end interface. It contains id, name, registered, and date_created. The “teams” table acts as a join-table. Outgoing data for “team_name” is shared with the “users” table. It also forms outgoing connections with the “ladders” table by providing “rank” and “team_name” 
+
+Leagues: The “leagues” table stores data containing the id, name, start_date, end_date, and (fk) sport_id. It establishes the relationship between “Ladders” and “Teams” to form a midpoint for league-specific information.
+
+Ladders: The “Ladders” table represents the positions for teams within a specific league. It contains id, league, teams, and positions for all teams. 
 
 ---
 ### R10 Describe the way tasks are allocated and tracked in your project
