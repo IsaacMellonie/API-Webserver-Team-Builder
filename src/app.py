@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 from datetime import date
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 
@@ -9,6 +10,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://isaac:my_pwd_2023
 
 
 db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 
 class User(db.Model):
@@ -16,18 +18,21 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     admin = db.Column(db.Boolean, default=False)
-    date_created = db.Column(db.Date(), default=date.today()) 
     captain = db.Column(db.Boolean, default=False)
+    date_created = db.Column(db.Date(), default=date.today()) 
     first = db.Column(db.String, default="First", nullable=False)
     last = db.Column(db.String, default="Last", nullable=False)
     dob = db.Column(db.Date)
     email = db.Column(db.String(60), nullable=False)
     password = db.Column(db.String, nullable=False)
     bio = db.Column(db.String(200), default="Introduce yourself")
-    available = db.Column(db.Boolean, default=True)
-    phone = db.Column(db.Integer())
-    team_id = db.Column(db.Integer())
+    available = db.Column(db.Boolean, default=False)
+    phone = db.Column(db.BigInteger())
+    team_id = db.Column(db.Integer(), default=1)
 
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "admin", "captain", "date_created", "first", "last", "dob", "email", "password", "bio", "available", "phone", "team_id")
 
 class Sport(db.Model):
     __tablename__ = "sports"
@@ -46,6 +51,11 @@ class Team(db.Model):
     captain = db.Column(db.String(), default=None)
     league = db.Column(db.String(), default=None)
     players = db.Column(db.String(), default=None)
+
+
+class TeamSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "team_name", "date_created", "captain", "league", "players")
 
 
 class League(db.Model):
@@ -87,19 +97,34 @@ def db_seed():
             phone=1234567890,
         ),
         User(
+            captain=True,
             first="Gary",
             last="Smith",
             email="smith@email.com",
             password="pwd123",
-            bio="I usually play on the wing. Not very expereinced."
+            bio="I usually play on the wing. Not very experienced.",
+            available=False,
+            phone=8733676222,
         ),
         User(
             first="May",
             last="Pham",
             email="pham@email.com",
             password="pwd123",
-            bio="Hi! Excited to meet everyone!"
-        )
+            bio="Hi! Excited to meet everyone! Here to have fun and make friends.",
+            available=False,
+            phone=2331983423,
+        ),
+        User(
+            first="Steven",
+            last="Williams",
+            dob="1996-04-06",
+            email="steve@email.com",
+            password="pwd123",
+            bio="Pretty new to the game. Here to learn.",
+            available=True,
+            phone=5164787923,
+        ),
     ]
     db.session.add_all(users)
     db.session.commit()
@@ -127,14 +152,34 @@ def db_seed():
 
     teams = [
         Team(
+            team_name="Free Agents"
+        ),
+        Team(
             team_name="Get Plastered",
-            date_created=date.today(),
             captain="John Johnson",
         ),
         Team(
             team_name="Bandits",
-            captain="None",
-        )
+            captain="Gary Smith"
+        ),
+        Team(
+            team_name="Potato Heads",
+        ),
+        Team(
+            team_name="Deep Fryers",
+        ),
+        Team(
+            team_name="The Gurus",
+        ),
+        Team(
+            team_name="Side Steppers",
+        ),
+        Team(
+            team_name="Flying X",
+        ),
+        Team(
+            team_name="Ducks",
+        ),
     ]
     db.session.add_all(teams)
     db.session.commit()
@@ -190,9 +235,14 @@ def db_seed():
     print("Database Seeded")
 
 
+@app.cli.command("drop")
+def db_drop():
+        db.drop_all()
+        print("Dropped Tables")
+
+
 @app.cli.command("create")
 def db_create():
-    db.drop_all()
     db.create_all()
     print("Created Tables")
 
@@ -202,8 +252,8 @@ def index():
     return "Hello, World!"
 
 
-@app.route("/captain")
-def all_users():
+@app.route("/captains")
+def captains():
     # select * from users;
     # Use a comma to separate conditions. Just like the AND operator.
     # to run it through an OR operator, wrap it with db._or() function.
@@ -211,14 +261,19 @@ def all_users():
     # use the .order_by() function to sort the results
     stmt = db.select(User).where(User.captain)#, User.team_id == 1)#.order_by(User.date_created) 
     users = db.session.scalars(stmt)
-    for user in users:
-        return user
+    return UserSchema(many=True).dump(users)
     
 
-@app.cli.command("non_captain")
-def all_users():
-    # select * from users;
-    stmt = db.select(User).where(User.captain != True)
-    users = db.session.scalars(stmt)
-    for user in users:
-        print(user.first)
+@app.route("/freeagents")
+def free_agents():
+    # select all users that are not assigned a team;
+    stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
+    users = db.session.scalars(stmt).all()
+    return UserSchema(many=True).dump(users)
+
+
+@app.route("/teams")
+def all_teams():
+    stmt = db.select(Team)
+    users = db.session.scalars(stmt).all()
+    return TeamSchema(many=True).dump(users)
