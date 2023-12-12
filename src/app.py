@@ -2,6 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 from datetime import date
 from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
+
 
 app = Flask(__name__)
 
@@ -11,6 +13,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://isaac:my_pwd_2023
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+bcrypt = Bcrypt(app)
 
 
 class User(db.Model):
@@ -23,30 +26,37 @@ class User(db.Model):
     first = db.Column(db.String, default="First", nullable=False)
     last = db.Column(db.String, default="Last", nullable=False)
     dob = db.Column(db.Date)
-    email = db.Column(db.String(60), nullable=False)
+    email = db.Column(db.String(60), nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     bio = db.Column(db.String(200), default="Introduce yourself")
     available = db.Column(db.Boolean, default=False)
     phone = db.Column(db.BigInteger())
-    team_id = db.Column(db.Integer(), default=1)
+    team_id = db.Column(db.Integer(), default=1) 
+
 
 class UserSchema(ma.Schema):
     class Meta:
         fields = ("id", "admin", "captain", "date_created", "first", "last", "dob", "email", "password", "bio", "available", "phone", "team_id")
 
+
 class Sport(db.Model):
     __tablename__ = "sports"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable = False)
+    name = db.Column(db.String, nullable=False, unique=True)
     max_players = db.Column(db.Integer)
+
+
+class SportSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name", "max_players")
 
 
 class Team(db.Model):
     __tablename__ = "teams"
 
     id = db.Column(db.Integer, primary_key=True)
-    team_name = db.Column(db.String, default="Team Name", nullable=False)
+    team_name = db.Column(db.String, default="Team Name", nullable=False, unique=True)
     date_created = db.Column(db.Date, default=date.today())
     captain = db.Column(db.String(), default=None)
     league = db.Column(db.String(), default=None)
@@ -62,17 +72,22 @@ class League(db.Model):
     __tablename__ = "leagues"
 
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(1), default="League Name")
+    name = db.Column(db.String(1), default="League Name", unique=True)
     start_date = db.Column(db.Date())
     end_date = db.Column(db.Date())
     sport = db.Column(db.String())
+
+
+class LeagueSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name", "start_date", "end_date", "sport")
 
 
 class Ladder(db.Model):
     __tablename__ = "ladders"
 
     id = db.Column(db.Integer, primary_key=True)
-    position = db.Column(db.Integer())
+    position = db.Column(db.Integer(), unique=True)
     team = db.Column(db.String())
     points = db.Column(db.Integer(), default=0)
     win = db.Column(db.Integer(), default=0)
@@ -91,7 +106,7 @@ def db_seed():
             last="Johnson",
             dob="1986-08-12",
             email="admin@email.com",
-            password="pwd123",
+            password=bcrypt.generate_password_hash("pwd123").decode("utf8"),
             bio="Hi, I've been playing touch football for about 10 years. I play middle.",
             available=True,
             phone=1234567890,
@@ -101,7 +116,7 @@ def db_seed():
             first="Gary",
             last="Smith",
             email="smith@email.com",
-            password="pwd123",
+            password=bcrypt.generate_password_hash("pwd123").decode("utf8"),
             bio="I usually play on the wing. Not very experienced.",
             available=False,
             phone=8733676222,
@@ -110,7 +125,7 @@ def db_seed():
             first="May",
             last="Pham",
             email="pham@email.com",
-            password="pwd123",
+            password=bcrypt.generate_password_hash("pwd123").decode("utf8"),
             bio="Hi! Excited to meet everyone! Here to have fun and make friends.",
             available=False,
             phone=2331983423,
@@ -120,7 +135,7 @@ def db_seed():
             last="Williams",
             dob="1996-04-06",
             email="steve@email.com",
-            password="pwd123",
+            password=bcrypt.generate_password_hash("pwd123").decode("utf8"),
             bio="Pretty new to the game. Here to learn.",
             available=True,
             phone=5164787923,
@@ -274,6 +289,6 @@ def free_agents():
 
 @app.route("/teams")
 def all_teams():
-    stmt = db.select(Team)
+    stmt = db.select(Team).order_by(Team.team_name.asc()) # Displays teams in ascending order. Use .desc() to flip around.
     users = db.session.scalars(stmt).all()
     return TeamSchema(many=True).dump(users)
