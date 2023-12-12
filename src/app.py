@@ -29,7 +29,7 @@ class User(db.Model):
     email = db.Column(db.String(60), nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     bio = db.Column(db.String(200), default="Introduce yourself")
-    available = db.Column(db.Boolean, default=False)
+    available = db.Column(db.Boolean, default=True)
     phone = db.Column(db.BigInteger())
     team_id = db.Column(db.Integer(), default=1) 
 
@@ -58,21 +58,23 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_name = db.Column(db.String, default="Team Name", nullable=False, unique=True)
     date_created = db.Column(db.Date, default=date.today())
-    captain = db.Column(db.String(), default=None)
-    league = db.Column(db.String(), default=None)
-    players = db.Column(db.String(), default=None)
+    points = db.Column(db.Integer, default=0)
+    win = db.Column(db.Integer, default=0)
+    loss = db.Column(db.Integer, default=0)
+    draw = db.Column(db.Integer, default=0)
+    league = db.Column(db.String(), default=None) #Foreign Key
 
 
 class TeamSchema(ma.Schema):
     class Meta:
-        fields = ("id", "team_name", "date_created", "captain", "league", "players")
+        fields = ("id", "team_name", "date_created", "points", "win", "loss", "draw", "league")
 
 
 class League(db.Model):
     __tablename__ = "leagues"
 
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(1), default="League Name", unique=True)
+    name = db.Column(db.String(1), default="League Name")
     start_date = db.Column(db.Date())
     end_date = db.Column(db.Date())
     sport = db.Column(db.String())
@@ -83,17 +85,13 @@ class LeagueSchema(ma.Schema):
         fields = ("id", "name", "start_date", "end_date", "sport")
 
 
-class Ladder(db.Model):
-    __tablename__ = "ladders"
+# class Ladder(db.Model):
+#     __tablename__ = "ladders"
 
-    id = db.Column(db.Integer, primary_key=True)
-    position = db.Column(db.Integer(), unique=True)
-    team = db.Column(db.String())
-    points = db.Column(db.Integer(), default=0)
-    win = db.Column(db.Integer(), default=0)
-    loss = db.Column(db.Integer(), default=0)
-    draw = db.Column(db.Integer(), default=0)
-    league_id = db.Column(db.Integer())
+#     id = db.Column(db.Integer, primary_key=True)
+#     position = db.Column(db.Integer(), unique=True)
+#     team = db.Column(db.String()) 
+#     league_id = db.Column(db.Integer())
 
 
 @app.cli.command("seed")
@@ -171,11 +169,9 @@ def db_seed():
         ),
         Team(
             team_name="Get Plastered",
-            captain="John Johnson",
         ),
         Team(
             team_name="Bandits",
-            captain="Gary Smith"
         ),
         Team(
             team_name="Potato Heads",
@@ -201,50 +197,22 @@ def db_seed():
 
     leagues = [
         League(
+            name="A",
+            start_date="2024-01-11",
+            end_date="2024-04-04",
+        ),
+        League(
+            name="B",
+            start_date="2024-01-11",
+            end_date="2024-04-04",
+        ),
+        League(
             name="C",
             start_date="2024-01-11",
             end_date="2024-04-04",
         )
     ]
     db.session.add_all(leagues)
-    db.session.commit()
-
-    ladders = [
-        Ladder(
-            position=1,
-        ),
-        Ladder(
-            position=2,
-        ),
-        Ladder(
-            position=3,
-        ),
-        Ladder(
-            position=4,
-        ),
-        Ladder(
-            position=5,
-        ),
-        Ladder(
-            position=6,
-        ),
-        Ladder(
-            position=7,
-        ),
-        Ladder(
-            position=8,
-        ),
-        Ladder(
-            position=9,
-        ),
-        Ladder(
-            position=10,
-        ),
-        Ladder(
-            position=11,
-        )
-    ]
-    db.session.add_all(ladders)
     db.session.commit()
 
     print("Database Seeded")
@@ -268,7 +236,7 @@ def index():
 
 
 @app.route("/users/register", methods=["POST"])
-def register():
+def register_user():
     #Parse incoming POST body through the schema
     user_info = UserSchema(exclude=["id"]).load(request.json) #Here the id is excluded from the request
     #Create a new user with the parsed data
@@ -280,7 +248,7 @@ def register():
         password=bcrypt.generate_password_hash(user_info["password"]).decode("utf8"),
         bio=user_info.get("bio", ""),
         available=user_info.get("available", False),
-        phone=user_info.get("phone", 9292752473)
+        phone=user_info.get("phone")
     )
     #Add and commit the new user to the database
     db.session.add(user)
@@ -314,3 +282,51 @@ def all_teams():
     stmt = db.select(Team).order_by(Team.team_name.asc()) # Displays teams in ascending order. Use .desc() to flip around.
     users = db.session.scalars(stmt).all()
     return TeamSchema(many=True).dump(users)
+
+
+@app.route("/teams/register", methods=["POST"])
+def register_team():
+    team_info = TeamSchema(exclude=["id", "date_created", "points", "win", "loss", "draw"]).load(request.json)
+    team = Team(
+        team_name=team_info["team_name"],
+        # date_created=["date_created"],
+        # points=team_info["points"],
+        # win=team_info["win"],
+        # loss=team_info["loss"],
+        # draw=team_info["draw"],
+    )
+
+    db.session.add(team)
+    db.session.commit()
+
+    return TeamSchema().dump(team), 201
+
+
+@app.route("/leagues/register", methods=["POST"])
+def register_league():
+    league_info = LeagueSchema(exclude=["id"]).load(request.json)
+    league = League(
+        name=league_info["name"],
+        start_date=league_info["start_date"],
+        end_date=league_info["end_date"],
+        sport=league_info["sport"]
+    )
+
+    db.session.add(league)
+    db.session.commit()
+
+    return LeagueSchema(exclude=["id"]).dump(league), 201
+
+
+@app.route("/sports/register", methods=["POST"])
+def register_sport():
+    sport_info = SportSchema(exclude=["id"]).load(request.json)
+    sport = Sport(
+        name=sport_info["name"],
+        max_players=sport_info["max_players"]
+    )
+
+    db.session.add(sport)
+    db.session.commit()
+
+    return SportSchema(exclude=["id"]).load(request.json), 201
