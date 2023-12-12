@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy 
 from datetime import date
 from flask_marshmallow import Marshmallow
@@ -267,7 +267,29 @@ def index():
     return "Hello, World!"
 
 
-@app.route("/captains")
+@app.route("/users/register", methods=["POST"])
+def register():
+    #Parse incoming POST body through the schema
+    user_info = UserSchema(exclude=["id"]).load(request.json) #Here the id is excluded from the request
+    #Create a new user with the parsed data
+    user = User(
+        first=user_info["first"],
+        last=user_info["last"],
+        dob=user_info.get("dob", "1999-01-01"), #if not provided, default to empty string
+        email=user_info["email"],
+        password=bcrypt.generate_password_hash(user_info["password"]).decode("utf8"),
+        bio=user_info.get("bio", ""),
+        available=user_info.get("available", False),
+        phone=user_info.get("phone", 9292752473)
+    )
+    #Add and commit the new user to the database
+    db.session.add(user)
+    db.session.commit()
+    #Return the new user
+    return UserSchema(exclude=["password"]).dump(user), 201 #Password is excluded from the returned data dump
+
+
+@app.route("/users/captains")
 def captains():
     # select * from users;
     # Use a comma to separate conditions. Just like the AND operator.
@@ -279,7 +301,7 @@ def captains():
     return UserSchema(many=True).dump(users)
     
 
-@app.route("/freeagents")
+@app.route("/users/freeagents")
 def free_agents():
     # select all users that are not assigned a team;
     stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
