@@ -3,8 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
-from sqlalchemy.exc import IntegrityError
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from sqlalchemy.exc import IntegrityError 
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta
 
 
@@ -246,7 +246,7 @@ def index():
 def register_user():
     try:
         #Parse incoming POST body through the schema
-        user_info = UserSchema(exclude=["id"]).load(request.json) #Here the id is excluded from the request
+        user_info = UserSchema(exclude=["id", "admin"]).load(request.json) #Here the id is excluded from the request
         #Create a new user with the parsed data
         user = User(
             first=user_info["first"],
@@ -280,6 +280,7 @@ def login():
         return {"error": "Invalid email or password"}, 401
 
 
+
 @app.route("/users/captains")
 @jwt_required()
 def captains():
@@ -290,16 +291,21 @@ def captains():
     # use the .order_by() function to sort the results
     stmt = db.select(User).where(User.captain)#, User.team_id == 1)#.order_by(User.date_created) 
     users = db.session.scalars(stmt)
-    return UserSchema(many=True).dump(users)
+    return UserSchema(many=True, exclude=["password"]).dump(users)
     
 
 @app.route("/users/freeagents")
 @jwt_required()
 def free_agents():
+    user_email = get_jwt_identity()
+    stmt = db.select(User).where(User.email == user_email)
+    user = db.session.scalar(stmt)
+    if not user.admin:
+        return {"error": "You must be an admin"}, 401
     # select all users that are not assigned a team;
     stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
     users = db.session.scalars(stmt).all()
-    return UserSchema(many=True).dump(users)
+    return UserSchema(many=True, exclude=["password"]).dump(users)
 
 
 @app.route("/teams")
@@ -335,6 +341,12 @@ def register_team():
 @app.route("/leagues/register", methods=["POST"])
 @jwt_required()
 def register_league():
+    user_email = get_jwt_identity()
+    stmt = db.select(User).where(User.email == user_email)
+    user = db.session.scalar(stmt)
+    if not user.admin:
+        return {"error": "You must be an admin"}, 401
+    
     league_info = LeagueSchema(exclude=["id"]).load(request.json)
     league = League(
         name=league_info["name"],
@@ -353,6 +365,12 @@ def register_league():
 @jwt_required()
 def register_sport():
     try:
+        user_email = get_jwt_identity()
+        stmt = db.select(User).where(User.email == user_email)
+        user = db.session.scalar(stmt)
+        if not user.admin:
+            return {"error": "You must be an admin"}, 401
+        
         sport_info = SportSchema(exclude=["id"]).load(request.json)
         sport = Sport(
             name=sport_info["name"],
