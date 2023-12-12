@@ -170,21 +170,23 @@ JWT Manager adds support for JSON Web Tokens (JWTs) with the Flask app. It handl
 
 **PostgreSQL** is an open-source relational database management system used to store information for the API. It facilitates complex queries and foreign keys and It offers a wide range of features to safely store and scale complicated data workloads.
 
+**Flask SQLAlchemy** is an extension for Flask. It adds support for SQLAlchemy. It provides a simple method of setting up common objects and patterns for using those objects.
+
 ---
 ### R8 Describe your projects models in terms of the relationships they have with each other
 
 ---
 ### R9 Discuss the database relations to be implemented in your application
 
-In Team Builder, I’ve created a relational database named “teamup”. It consists of tables labelled users, leagues, teams and sports. These tables form a relational database that establishes table connections and removes any data redundancies. It facilitates dynamic back-end connections for user-facing data manipulation and retrieval. 
+In Team Builder, I’ve created a relational database named **“teamup”**. It consists of tables labelled users, leagues, teams and sports. These tables form a relational database that establishes table connections and removes any data redundancies. It facilitates dynamic back-end connections for user-facing data manipulation and retrieval. 
 
-Users: The “users” table stores personal information, relationships with other entities, and important data types which allow the system to determine levels of user access and interactivity.
+**Users:** The “users” table stores personal information, relationships with other entities, and important data types which allow the system to determine levels of user access and interactivity.
 
-Teams: The “teams” table forms the fundamental relationship with nearly all other database tables. It unifies users to form teams, while also forming important relationships with the front-end interface. It contains id, name, registered, and date_created. The “teams” table acts as a join-table. Outgoing data for “team_name” is shared with the “users” table. It also forms outgoing connections with the “ladders” table by providing “rank” and “team_name” 
+**Teams:** The “teams” table forms the fundamental relationship with nearly all other database tables. It unifies users to form teams, while also forming important relationships with the front-end interface. It contains id, name, registered, and date_created. The “teams” table acts as a join-table. Outgoing data for “team_name” is shared with the “users” table. It also forms outgoing connections with the “ladders” table by providing “rank” and “team_name” 
 
-Leagues: The “leagues” table stores data containing the id, name, start_date, end_date, and (fk) sport_id. It establishes the relationship between “Ladders” and “Teams” to form a midpoint for league-specific information.
+**Leagues:** The “leagues” table stores data containing the id, name, start_date, end_date, and (fk) sport_id. It establishes the relationship between “Ladders” and “Teams” to form a midpoint for league-specific information.
 
-Ladders: The “Ladders” table represents the positions for teams within a specific league. It contains id, league, teams, and positions for all teams. 
+**Ladders:** The “Ladders” table represents the positions for teams within a specific league. It contains id, league, teams, and positions for all teams. 
 
 ---
 ### R10 Describe the way tasks are allocated and tracked in your project
@@ -193,11 +195,12 @@ Ladders: The “Ladders” table represents the positions for teams within a spe
 
 ### Daily Standups:
 
-![standup 01](./docs/daily-standups/standup_01.jpg)
+![standup 01](./docs/daily-standups/standups.png)
 
 ### Trello Board: 
 
 ![trello 01](./docs/trello-board/trello_01.jpg)
+![trello 02](./docs/trello-board/trello_02.jpg)
 
 ### GitHub Commits:
 
