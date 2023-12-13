@@ -24,12 +24,13 @@ def register_user():
     try:
         # Parse incoming POST body through the schema
         # Here the id is excluded from the request
-        user_info = UserSchema(exclude=["id", "admin"]).load(request.json) 
+        user_info = UserSchema(exclude=["id", "admin", "date_created"]).load(request.json) 
         # Create a new user with the parsed data
         user = User(
+            captain=user_info.get("captain"),
             first=user_info["first"],
             last=user_info["last"],
-            dob=user_info.get("dob", "1999-01-01"), # if not provided, default to empty string
+            dob=user_info.get("dob"), # if not provided, default to None
             email=user_info["email"],
             password=bcrypt.generate_password_hash(user_info["password"]).decode("utf8"),
             bio=user_info.get("bio", ""),
@@ -82,3 +83,9 @@ def free_agents():
     stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
     users = db.session.scalars(stmt).all()
     return UserSchema(many=True, exclude=["password"]).dump(users)
+
+
+# Update the user information stored in the database.
+@users_bp.route("/<int:id>", methods=["PUT", "PATCH"])
+def update_user(id):
+    user_info = UserSchema(exclude=["id", "admin", "date_created", "captain"]).load(request.json) 
