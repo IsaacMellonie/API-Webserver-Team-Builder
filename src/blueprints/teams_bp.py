@@ -6,10 +6,16 @@ from flask_jwt_extended import jwt_required
 from models.team import Team, TeamSchema
 
 
+# A url prefix "/teams" is assigned to all routes,
+# which eliminates the need for declaring the url prefix
+# separatley each time. Future changes to routes will be
+# alot less time consuming this way. The entity name is
+# also passed in. The data is then assigned to "teams_bp".
 teams_bp = Blueprint("teams", __name__, url_prefix="/teams")
 
 
-@teams_bp.route("/teams")
+# Get all teams in the database
+@teams_bp.route("/all_teams")
 @jwt_required()
 def all_teams():
     stmt = db.select(Team).order_by(Team.team_name.asc()) # Displays teams in ascending order. Use .desc() to flip around.
@@ -17,6 +23,7 @@ def all_teams():
     return TeamSchema(many=True).dump(users)
 
 
+# A captain can register a new team. Team names must be unique.
 @teams_bp.route("/register", methods=["POST"])
 @jwt_required()
 def register_team():

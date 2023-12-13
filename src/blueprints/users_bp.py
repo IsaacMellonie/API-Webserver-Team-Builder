@@ -9,38 +9,48 @@ from flask_jwt_extended import jwt_required
 
 ### Import admin_required() !!!!!!!!!!!!!!!!!!
 
+
+# A url prefix "/users" is assigned to all routes,
+# which eliminates the need for declaring the url prefix
+# separatley each time. Future changes to routes will be
+# alot less time consuming this way. The entity name is
+# also passed in. The data is then assigned to "users_bp".
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
+# This route registers a user. The user must enter, first name, last name, email and pasword.
 @users_bp.route("/register", methods=["POST"])
 def register_user():
     try:
-        #Parse incoming POST body through the schema
-        user_info = UserSchema(exclude=["id", "admin"]).load(request.json) #Here the id is excluded from the request
-        #Create a new user with the parsed data
+        # Parse incoming POST body through the schema
+        # Here the id is excluded from the request
+        user_info = UserSchema(exclude=["id", "admin"]).load(request.json) 
+        # Create a new user with the parsed data
         user = User(
             first=user_info["first"],
             last=user_info["last"],
-            dob=user_info.get("dob", "1999-01-01"), #if not provided, default to empty string
+            dob=user_info.get("dob", "1999-01-01"), # if not provided, default to empty string
             email=user_info["email"],
             password=bcrypt.generate_password_hash(user_info["password"]).decode("utf8"),
             bio=user_info.get("bio", ""),
             available=user_info.get("available"),
             phone=user_info.get("phone")
         )
-        #Add and commit the new user to the database
+        # Add and commit the new user to the database
         db.session.add(user)
+        # Return the new user
         db.session.commit()
-        #Return the new user
-        return UserSchema(exclude=["password"]).dump(user), 201 #Password is excluded from the returned data dump
+        # Password is excluded from the returned data dump
+        return UserSchema(exclude=["password"]).dump(user), 201 
     except IntegrityError:
-        return {"error": "Email address already exists"}, 409 #409 is a conflict
+        return {"error": "Email address already exists"}, 409 # 409 is a conflict
 
 
-#This is the login route for users
+# This is the login route for users
 @users_bp.route("/login", methods=["POST"])
 def login():
-    user_info = UserSchema(exclude=["id", "admin", "date_created", "first", "last", "dob", "bio", "available", "phone", "team_id"]).load(request.json)
+    user_info = UserSchema(exclude=["id", "admin", "date_created", "first", "last", "dob", 
+                                    "bio", "available", "phone", "team_id"]).load(request.json)
     stmt = db.select(User).where(User.email==user_info["email"])
     user = db.session.scalar(stmt)
     if user and bcrypt.check_password_hash(user.password, user_info["password"]):

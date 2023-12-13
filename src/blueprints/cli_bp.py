@@ -5,10 +5,10 @@ from models.league import League
 from setup import db, bcrypt
 from flask import Blueprint 
 
-
+# Here Blueprint is defined 
 db_commands = Blueprint("db", __name__)
 
-
+# This command will seed the database entities.
 @db_commands.cli.command("seed")
 def db_seed():
     users = [
@@ -132,13 +132,13 @@ def db_seed():
 
     print("Database Seeded")
 
-
+# This command will drop the database entities.
 @db_commands.cli.command("drop")
 def db_drop():
         db.drop_all()
         print("Dropped Tables")
 
-
+# This command will create the database entities.
 @db_commands.cli.command("create")
 def db_create():
     db.create_all()
