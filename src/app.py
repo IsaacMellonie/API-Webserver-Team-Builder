@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 from flask_marshmallow import Marshmallow
@@ -21,6 +21,19 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+
+
+def admin_required():
+    user_email = get_jwt_identity()
+    stmt = db.select(User).where(User.email == user_email)
+    user = db.session.scalar(stmt)
+    if not (user and user.admin):
+        abort(401)
+    
+
+@app.errorhandler(401)
+def unauthorized(err):
+    return {"error": "You are not authorised to access this resource"}
 
 
 class User(db.Model):
@@ -297,11 +310,7 @@ def captains():
 @app.route("/users/freeagents")
 @jwt_required()
 def free_agents():
-    user_email = get_jwt_identity()
-    stmt = db.select(User).where(User.email == user_email)
-    user = db.session.scalar(stmt)
-    if not user.admin:
-        return {"error": "You must be an admin"}, 401
+    admin_required()
     # select all users that are not assigned a team;
     stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
     users = db.session.scalars(stmt).all()
@@ -341,11 +350,7 @@ def register_team():
 @app.route("/leagues/register", methods=["POST"])
 @jwt_required()
 def register_league():
-    user_email = get_jwt_identity()
-    stmt = db.select(User).where(User.email == user_email)
-    user = db.session.scalar(stmt)
-    if not user.admin:
-        return {"error": "You must be an admin"}, 401
+    admin_required()
     
     league_info = LeagueSchema(exclude=["id"]).load(request.json)
     league = League(
@@ -365,11 +370,7 @@ def register_league():
 @jwt_required()
 def register_sport():
     try:
-        user_email = get_jwt_identity()
-        stmt = db.select(User).where(User.email == user_email)
-        user = db.session.scalar(stmt)
-        if not user.admin:
-            return {"error": "You must be an admin"}, 401
+        admin_required()
         
         sport_info = SportSchema(exclude=["id"]).load(request.json)
         sport = Sport(
