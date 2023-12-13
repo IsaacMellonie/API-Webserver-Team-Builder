@@ -1,4 +1,3 @@
-
 from setup import db, ma 
 from datetime import date 
 
