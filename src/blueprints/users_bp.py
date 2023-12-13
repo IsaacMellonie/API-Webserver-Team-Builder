@@ -1,6 +1,6 @@
 from datetime import timedelta
 from flask_jwt_extended import create_access_token
-from flask import Blueprint
+from flask import Blueprint, abort
 from models.user import User, UserSchema
 from setup import bcrypt, db
 from sqlalchemy.exc import IntegrityError 
@@ -88,4 +88,37 @@ def free_agents():
 # Update the user information stored in the database.
 @users_bp.route("/<int:id>", methods=["PUT", "PATCH"])
 def update_user(id):
-    user_info = UserSchema(exclude=["id", "admin", "date_created", "captain"]).load(request.json) 
+    try:
+        user_info = UserSchema(exclude=["id", "admin", "date_created"]).load(request.json)
+        stmt = db.select(User).filter_by(id=id)
+        user = db.session.scalar(stmt)
+        if user: # Add and user email == email
+            user.captain = user_info.get("captain", user.captain)
+            user.first = user_info.get("first", user.first)
+            user.last = user_info.get("last", user.last)
+            user.dob = user_info.get("dob", user.dob)
+            user.email = user_info.get("email", user.email)
+            user.password = user_info.get("password", user.password)
+            user.bio = user_info.get("bio", user.bio)
+            user.available = user_info.get("available", user.available)
+            user.phone = user_info.get("phone", user.phone)
+            user.team_id = user_info.get("team_id", user.team_id)
+            db.session.commit()
+            return UserSchema(exclude=["admin", "date_created", "password"]).dump(user)
+        else:
+            return {"error": "User not found"}, 404
+    except IntegrityError:
+        return {"error": "Email address already exists"}, 409 # 409 is a conflict
+    
+
+# Delete user from database
+@users_bp.route("/<int:id>", methods=["DELETE"])
+def delete_user(id):
+    stmt = db.select(User).filter_by(id=id)
+    user = db.session.scalar(stmt)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return {}, 200
+    else:
+        return {"error": "User not found"}, 404
