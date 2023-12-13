@@ -1,26 +1,10 @@
-from flask import Flask, request, abort
-from flask_sqlalchemy import SQLAlchemy
+from flask import request, abort
 from datetime import date
-from flask_marshmallow import Marshmallow
-from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError 
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta
-
-
-app = Flask(__name__)
-
-
-app.config["JWT_SECRET_KEY"] = "jwt_secret_key"
-
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://isaac:my_pwd_2023@127.0.0.1:5432/teamup"
-
-
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
-bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
+from models.user import User, UserSchema
+from setup import db, ma, app, bcrypt, jwt
 
 
 def admin_required():
@@ -34,29 +18,6 @@ def admin_required():
 @app.errorhandler(401)
 def unauthorized(err):
     return {"error": "You are not authorised to access this resource"}
-
-
-class User(db.Model):
-    __tablename__ = "users"
-
-    id = db.Column(db.Integer, primary_key=True)
-    admin = db.Column(db.Boolean, default=False)
-    captain = db.Column(db.Boolean, default=False)
-    date_created = db.Column(db.Date(), default=date.today()) 
-    first = db.Column(db.String, default="First", nullable=False)
-    last = db.Column(db.String, default="Last", nullable=False)
-    dob = db.Column(db.Date)
-    email = db.Column(db.String(60), nullable=False, unique=True)
-    password = db.Column(db.String, nullable=False)
-    bio = db.Column(db.String(200), default="Introduce yourself")
-    available = db.Column(db.Boolean, default=True)
-    phone = db.Column(db.BigInteger())
-    team_id = db.Column(db.Integer(), default=1) 
-
-
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ("id", "admin", "captain", "date_created", "first", "last", "dob", "email", "password", "bio", "available", "phone", "team_id")
 
 
 class Sport(db.Model):
