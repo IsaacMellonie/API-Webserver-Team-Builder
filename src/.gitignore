@@ -3,3 +3,5 @@ __pycache__
 .DS_Store
 .flaskenv
 .env
+./blueprints/__pycache__
+./models/__pycache__

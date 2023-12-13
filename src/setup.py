@@ -19,3 +19,8 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+
+
+@app.errorhandler(401)
+def unauthorized(err):
+    return {"error": "You are not authorised to access this resource"}
