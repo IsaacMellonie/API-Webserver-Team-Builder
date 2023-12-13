@@ -19,7 +19,7 @@ users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
 # This route registers a user. The user must enter, first name, last name, email and pasword.
-@users_bp.route("/register", methods=["POST"])
+@users_bp.route("/", methods=["POST"])
 def register_user():
     try:
         # Parse incoming POST body through the schema

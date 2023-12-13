@@ -24,7 +24,7 @@ def all_teams():
 
 
 # A captain can register a new team. Team names must be unique.
-@teams_bp.route("/register", methods=["POST"])
+@teams_bp.route("/", methods=["POST"])
 @jwt_required()
 def register_team():
     try:
@@ -44,3 +44,18 @@ def register_team():
         return TeamSchema().dump(team), 201
     except IntegrityError:
         return {"error": "Team name already exists"}, 409 #409 is a conflict
+    
+
+# Here the route specifies that we are looking
+# to receive an integer type identifier. The
+# database can then be queried and return the
+# corresponding team that matches the id.
+@teams_bp.route("/<int:id>")
+@jwt_required()
+def one_team(id):
+    stmt = db.select(Team).filter_by(id=id)
+    team = db.session.scalar(stmt)
+    if team:
+        return TeamSchema().dump(team)
+    else:
+        return {"error": "Team not found"}, 404

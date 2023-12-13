@@ -13,7 +13,7 @@ from models.sport import Sport, SportSchema
 sports_bp = Blueprint("sports", __name__, url_prefix="/sports")
 
 # A user can register a sport here. Sport names must be unique.
-@sports_bp.route("/register", methods=["POST"])
+@sports_bp.route("/", methods=["POST"])
 @jwt_required()
 def register_sport():
     try:

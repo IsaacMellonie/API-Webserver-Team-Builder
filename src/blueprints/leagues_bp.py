@@ -14,7 +14,7 @@ leagues_bp = Blueprint("leagues", __name__, url_prefix="/leagues")
 
 # This route allows a user to register a League. All league names must
 # be unique for their sport but duplicates are allowed.
-@leagues_bp.route("/register", methods=["POST"])
+@leagues_bp.route("/", methods=["POST"])
 @jwt_required()
 def register_league():
     # admin_required()
