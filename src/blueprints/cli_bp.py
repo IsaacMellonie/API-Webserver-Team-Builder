@@ -1,12 +1,15 @@
-from flask_bcrypt import bcrypt
 from models.user import User
 from models.team import Team 
 from models.sport import Sport
 from models.league import League 
-from setup import app, db
+from setup import db, bcrypt
+from flask import Blueprint 
 
 
-@app.cli.command("seed")
+db_commands = Blueprint("db", __name__)
+
+
+@db_commands.cli.command("seed")
 def db_seed():
     users = [
         User(
@@ -130,13 +133,13 @@ def db_seed():
     print("Database Seeded")
 
 
-@app.cli.command("drop")
+@db_commands.cli.command("drop")
 def db_drop():
         db.drop_all()
         print("Dropped Tables")
 
 
-@app.cli.command("create")
+@db_commands.cli.command("create")
 def db_create():
     db.create_all()
     print("Created Tables")
