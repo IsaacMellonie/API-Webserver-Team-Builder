@@ -31,3 +31,27 @@ def register_league():
     db.session.commit()
 
     return LeagueSchema(exclude=["id"]).dump(league), 201
+
+
+@leagues_bp.route("/<int:id>", methods=["PUT", "PATCH"])
+def update_league():
+    league_info = LeagueSchema(exclude=["id", "sport"])
+    stmt = db.select(League).filter_by(id=id)
+    league = db.session.scalar(stmt)
+    if league:
+        league.name = league_info.get("name", league.name)
+        league.start_date = league_info.get("start_date", league.start_date)
+        league.end_date = league_info.get("end_date", league.end_date)
+
+
+# Delete a league
+@leagues_bp.route("/<int:id>", methods=["DELETE"])
+def update_league(id):
+    stmt = db.select(League).filter_by(id=id)
+    league = db.session.scalar(stmt)
+    if league:
+        db.session.delete(league)
+        db.session.commit()
+        return {}, 200
+    else:
+        return {"error": "League not found"}
