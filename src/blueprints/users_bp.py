@@ -6,8 +6,7 @@ from setup import bcrypt, db
 from sqlalchemy.exc import IntegrityError 
 from flask import request
 from flask_jwt_extended import jwt_required
-
-### Import admin_required() !!!!!!!!!!!!!!!!!!
+from auth import admin_required, captain_required, user_id_required
 
 
 # A url prefix "/users" is assigned to all routes,
@@ -78,7 +77,7 @@ def captains():
 @users_bp.route("/freeagents")
 @jwt_required()
 def free_agents():
-    # admin_required()
+    captain_required()
     # select all users that are not assigned a team;
     stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
     users = db.session.scalars(stmt).all()
@@ -87,7 +86,9 @@ def free_agents():
 
 # Update the user information stored in the database.
 @users_bp.route("/<int:id>", methods=["PUT", "PATCH"])
+@jwt_required()
 def update_user(id):
+    user_id_required(id)
     try:
         user_info = UserSchema(exclude=["id", "admin", "date_created"]).load(request.json)
         stmt = db.select(User).filter_by(id=id)
@@ -113,7 +114,9 @@ def update_user(id):
 
 # Delete user from database
 @users_bp.route("/<int:id>", methods=["DELETE"])
+@jwt_required()
 def delete_user(id):
+    admin_required()
     stmt = db.select(User).filter_by(id=id)
     user = db.session.scalar(stmt)
     if user:

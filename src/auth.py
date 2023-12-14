@@ -21,4 +21,31 @@ def admin_required():
     user = db.session.scalar(stmt)
     if not (user and user.admin):
         abort(401)
-    
+
+
+# A captain level user can update team details.
+def captain_required():
+    user_email = get_jwt_identity()
+    stmt = db.select(User).where(User.email == user_email)
+    user = db.session.scalar(stmt)
+    if not (user and (user.admin or user.captain)):
+        abort(401)
+
+
+# The id input to the url must match the user.team_id and
+# the user must be a captain level user to update team details.
+def captain_id_required(id):
+    user_email = get_jwt_identity()
+    stmt = db.select(User).where(User.email == user_email)
+    user = db.session.scalar(stmt)
+    if not (user.team_id == id and (user or user.admin or user.captain)):
+        abort(401)
+
+
+# User id input must match the user's id and user email must match.
+def user_id_required(id):
+    user_email = get_jwt_identity()
+    stmt = db.select(User).where(User.email == user_email, User.id == id)
+    user = db.session.scalar(stmt)
+    if not user:
+        abort(401)

@@ -18,7 +18,7 @@ from datetime import date
 class User(db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     admin = db.Column(db.Boolean, default=False)
     captain = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.Date(), default=date.today())

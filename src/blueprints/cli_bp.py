@@ -23,6 +23,7 @@ def db_seed():
             bio="Hi, I've been playing touch football for about 10 years. I play middle.",
             available=True,
             phone=1234567890,
+            team_id=2,
         ),
         User(
             captain=True,
@@ -33,6 +34,7 @@ def db_seed():
             bio="I usually play on the wing. Not very experienced.",
             available=False,
             phone=8733676222,
+            team_id=3,
         ),
         User(
             first="May",

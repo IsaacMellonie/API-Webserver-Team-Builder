@@ -9,7 +9,7 @@ class League(db.Model):
     __tablename__ = "leagues"
 
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(), unique=True)
+    name = db.Column(db.String(1), unique=True)
     start_date = db.Column(db.Date())
     end_date = db.Column(db.Date())
     sport = db.Column(db.String()) # Foreign Key
