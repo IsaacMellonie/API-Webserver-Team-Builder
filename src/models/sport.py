@@ -6,7 +6,8 @@ from setup import ma, db
 class Sport(db.Model):
     __tablename__ = "sports"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+
     name = db.Column(db.String, nullable=False, unique=True)
     max_players = db.Column(db.Integer)
 

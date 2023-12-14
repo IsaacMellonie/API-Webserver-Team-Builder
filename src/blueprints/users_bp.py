@@ -34,7 +34,8 @@ def register_user():
             password=bcrypt.generate_password_hash(user_info["password"]).decode("utf8"),
             bio=user_info.get("bio", ""),
             available=user_info.get("available"),
-            phone=user_info.get("phone")
+            phone=user_info.get("phone"),
+            team_id=user_info.get("team_id"),
         )
         # Add and commit the new user to the database
         db.session.add(user)
@@ -90,11 +91,11 @@ def free_agents():
 def update_user(id):
     user_id_required(id)
     try:
-        user_info = UserSchema(exclude=["id", "admin", "date_created"]).load(request.json)
+        user_info = UserSchema(exclude=["id", "admin", "date_created", "captain"]).load(request.json)
         stmt = db.select(User).filter_by(id=id)
         user = db.session.scalar(stmt)
         if user: # Add and user email == email
-            user.captain = user_info.get("captain", user.captain)
+            # user.captain = user_info.get("captain", user.captain)
             user.first = user_info.get("first", user.first)
             user.last = user_info.get("last", user.last)
             user.dob = user_info.get("dob", user.dob)

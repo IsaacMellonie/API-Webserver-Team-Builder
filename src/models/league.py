@@ -8,11 +8,13 @@ from setup import ma, db
 class League(db.Model):
     __tablename__ = "leagues"
 
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(1), unique=True)
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+
+    name = db.Column(db.String, unique=True)
     start_date = db.Column(db.Date())
     end_date = db.Column(db.Date())
-    sport = db.Column(db.String()) # Foreign Key
+
+    sport = db.Column(db.Integer, db.ForeignKey("sports.id"), nullable=False) # Foreign Key
 
 
 # In the LeagueSchema class, all of the fields are defined.

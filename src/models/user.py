@@ -1,5 +1,6 @@
 from setup import db, ma
 from datetime import date
+from marshmallow import fields 
 
 # User model is defined with fields for id, admin,
 # captain, date_created, first, last, dob, email, 
@@ -19,9 +20,10 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
+
     admin = db.Column(db.Boolean, default=False)
     captain = db.Column(db.Boolean, default=False)
-    date_created = db.Column(db.Date(), default=date.today())
+    date_created = db.Column(db.Date(), default=date.today(), nullable=False)
     first = db.Column(db.String, default="First", nullable=False)
     last = db.Column(db.String, default="Last", nullable=False)
     dob = db.Column(db.Date)
@@ -30,11 +32,18 @@ class User(db.Model):
     bio = db.Column(db.String(200), default="Introduce yourself")
     available = db.Column(db.Boolean, default=True)
     phone = db.Column(db.BigInteger())
-    team_id = db.Column(db.Integer(), default=1)
+
+    team_id = db.Column(db.Integer(), db.ForeignKey("teams.id"), default=1, nullable=False)
+    #SQLAlchemy is used to access an instance of the Team model
+    team = db.relationship("Team") 
 
 # The UserSchema is defined here.
 class UserSchema(ma.Schema):
+    # Here the "team" db.relationship needs to be defined so that
+    # marshmallow can nest the data.
+    team = fields.Nested("TeamSchema")
+    
     class Meta:
         fields = ("id", "admin", "captain", "date_created",
                   "first", "last", "dob", "email", "password",
-                  "bio", "available", "phone", "team_id")
+                  "bio", "available", "phone", "team")

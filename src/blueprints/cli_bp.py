@@ -11,6 +11,91 @@ db_commands = Blueprint("db", __name__)
 # This command will seed the database entities.
 @db_commands.cli.command("seed")
 def db_seed():
+    sports = [
+        Sport(
+            name="Touch Football",
+            max_players=12,
+        ),
+        Sport(
+            name="Soccer",
+            max_players=17,
+        ),
+        Sport(
+            name="Netball",
+            max_players=18,
+        ),
+        Sport(
+            name="Softball",
+            max_players=22,
+        )
+    ]
+    db.session.add_all(sports)
+    db.session.commit()
+
+    leagues = [
+        League(
+            name="A",
+            start_date="2024-01-11",
+            end_date="2024-04-04",
+            sport=1,
+        ),
+        League(
+            name="B",
+            start_date="2024-01-11",
+            end_date="2024-04-04",
+            sport=1,
+        ),
+        League(
+            name="C",
+            start_date="2024-01-11",
+            end_date="2024-04-04",
+            sport=1,
+        )
+    ]
+    db.session.add_all(leagues)
+    db.session.commit()
+
+    teams = [
+        Team(
+            team_name="Free Agents",
+            league=1,
+        ),
+        Team(
+            team_name="Get Plastered",
+            league=1,
+        ),
+        Team(
+            team_name="Bandits",
+            league=1,
+        ),
+        Team(
+            team_name="Potato Heads",
+            league=1,
+        ),
+        Team(
+            team_name="Deep Fryers",
+            league=1,
+        ),
+        Team(
+            team_name="The Gurus",
+            league=1,
+        ),
+        Team(
+            team_name="Side Steppers",
+            league=1,
+        ),
+        Team(
+            team_name="Flying X",
+            league=1,
+        ),
+        Team(
+            team_name="Ducks",
+            league=1,
+        ),
+    ]
+    db.session.add_all(teams)
+    db.session.commit()
+
     users = [
         User(
             admin=True,
@@ -44,6 +129,7 @@ def db_seed():
             bio="Hi! Excited to meet everyone! Here to have fun and make friends.",
             available=False,
             phone=2331983423,
+            team_id=4,
         ),
         User(
             first="Steven",
@@ -57,79 +143,6 @@ def db_seed():
         ),
     ]
     db.session.add_all(users)
-    db.session.commit()
-
-    sports = [
-        Sport(
-            name="Touch Football",
-            max_players=12,
-        ),
-        Sport(
-            name="Soccer",
-            max_players=17,
-        ),
-        Sport(
-            name="Netball",
-            max_players=18,
-        ),
-        Sport(
-            name="Softball",
-            max_players=22,
-        )
-    ]
-    db.session.add_all(sports)
-    db.session.commit()
-
-    teams = [
-        Team(
-            team_name="Free Agents"
-        ),
-        Team(
-            team_name="Get Plastered",
-        ),
-        Team(
-            team_name="Bandits",
-        ),
-        Team(
-            team_name="Potato Heads",
-        ),
-        Team(
-            team_name="Deep Fryers",
-        ),
-        Team(
-            team_name="The Gurus",
-        ),
-        Team(
-            team_name="Side Steppers",
-        ),
-        Team(
-            team_name="Flying X",
-        ),
-        Team(
-            team_name="Ducks",
-        ),
-    ]
-    db.session.add_all(teams)
-    db.session.commit()
-
-    leagues = [
-        League(
-            name="A",
-            start_date="2024-01-11",
-            end_date="2024-04-04",
-        ),
-        League(
-            name="B",
-            start_date="2024-01-11",
-            end_date="2024-04-04",
-        ),
-        League(
-            name="C",
-            start_date="2024-01-11",
-            end_date="2024-04-04",
-        )
-    ]
-    db.session.add_all(leagues)
     db.session.commit()
 
     print("Database Seeded")
