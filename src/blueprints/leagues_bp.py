@@ -27,7 +27,7 @@ def register_league():
         name=league_info["name"],
         start_date=league_info["start_date"],
         end_date=league_info["end_date"],
-        sport=league_info["sport"]
+        sport=league_info["sport_id"]
     )
 
     db.session.add(league)
@@ -50,7 +50,7 @@ def update_league(id):
             league.start_date = league_info.get("start_date", league.start_date)
             league.end_date = league_info.get("end_date", league.end_date)
             db.session.commit()
-            return LeagueSchema(exclude=["id",]).dump(league)
+            return LeagueSchema(exclude=["id", "teams", "sport_id"]).dump(league)
         else:
             return {"error": "League not found"}
     except DataError:

@@ -19,7 +19,7 @@ class League(db.Model):
     teams = db.relationship("Team", back_populates="league_id")
 
     # Foreign Key - establishes a relationship at the database level
-    sport = db.Column(db.Integer, db.ForeignKey("sports.id")) # Foreign Key
+    sport = db.Column(db.Integer, db.ForeignKey("sports.id"), nullable=False) # Foreign Key
     # SQLAlchemy relationship - nests an instance of a related model
     sport_id = db.relationship("Sport", back_populates="leagues")
 

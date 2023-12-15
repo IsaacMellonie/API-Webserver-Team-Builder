@@ -23,7 +23,7 @@ def register_user():
     try:
         # Parse incoming POST body through the schema
         # Here the id is excluded from the request
-        user_info = UserSchema(exclude=["id", "admin", "date_created", "team_id"]).load(request.json) 
+        user_info = UserSchema(exclude=["id", "admin", "date_created", "team"]).load(request.json) 
         # Create a new user with the parsed data
         user = User(
             captain=user_info.get("captain"),
@@ -35,14 +35,14 @@ def register_user():
             bio=user_info.get("bio", ""),
             available=user_info.get("available"),
             phone=user_info.get("phone"),
-            team_id=user_info.get("team.id"),
+            team_id=user_info.get("team.id", 1),
         )
         # Add and commit the new user to the database
         db.session.add(user)
         # Return the new user
         db.session.commit()
         # Password is excluded from the returned data dump
-        return UserSchema(exclude=["password"]).dump(user), 201 
+        return UserSchema(exclude=["password", "team"]).dump(user), 201 
     except IntegrityError:
         return {"error": "Email address already exists"}, 409 # 409 is a conflict
 
@@ -56,12 +56,12 @@ def login():
     user = db.session.scalar(stmt)
     if user and bcrypt.check_password_hash(user.password, user_info["password"]):
         token = create_access_token(identity=user.email, expires_delta=timedelta(hours=10))
-        return {"token": token, "user": UserSchema(exclude=["password"]).dump(user)}
+        return {"token": token, "user": UserSchema(only=["first", "last", "email", "team.id"]).dump(user)}
     else:
         return {"error": "Invalid email or password"}, 401
 
 
-
+# Get all captains
 @users_bp.route("/captains")
 @jwt_required()
 def captains():
@@ -72,9 +72,12 @@ def captains():
     # use the .order_by() function to sort the results
     stmt = db.select(User).where(User.captain)#, User.team_id == 1)#.order_by(User.date_created) 
     users = db.session.scalars(stmt)
-    return UserSchema(many=True, exclude=["password"]).dump(users)
+    return UserSchema(many=True, exclude=["password", "team.league_id", 
+                                          "team.users", "team.points"]).dump(users)
     
 
+# Get Free Agents users on team id=1. This is useful for captains
+# and admins who need to find players.
 @users_bp.route("/freeagents")
 @jwt_required()
 def free_agents():
@@ -82,7 +85,8 @@ def free_agents():
     # select all users that are not assigned a team;
     stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
     users = db.session.scalars(stmt).all()
-    return UserSchema(many=True, exclude=["password"]).dump(users)
+    return UserSchema(many=True, exclude=["password", "team.league_id", 
+                                          "team.users", "team.points"]).dump(users)
 
 
 # Update the user information stored in the database.
@@ -91,7 +95,8 @@ def free_agents():
 def update_user(id):
     user_id_required(id)
     try:
-        user_info = UserSchema(exclude=["id", "admin", "date_created", "captain"]).load(request.json)
+        user_info = UserSchema(exclude=["id", "admin", "date_created", 
+                                        "captain"]).load(request.json)
         stmt = db.select(User).filter_by(id=id)
         user = db.session.scalar(stmt)
         if user: # Add and user email == email
@@ -106,7 +111,9 @@ def update_user(id):
             user.phone = user_info.get("phone", user.phone)
             user.team_id = user_info.get("team_id", user.team_id)
             db.session.commit()
-            return UserSchema(exclude=["admin", "date_created", "password"]).dump(user)
+            return UserSchema(exclude=["admin", "date_created",
+                                       "password", "team.league_id",
+                                       "team.users", "team.points" ]).dump(user)
         else:
             return {"error": "User not found"}, 404
     except IntegrityError:

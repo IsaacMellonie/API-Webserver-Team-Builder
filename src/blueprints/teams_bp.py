@@ -21,33 +21,8 @@ teams_bp = Blueprint("teams", __name__, url_prefix="/teams")
 def all_teams():
     stmt = db.select(Team).order_by(Team.team_name.asc()) # Displays teams in ascending order. Use .desc() to flip around.
     users = db.session.scalars(stmt).all()
-    return TeamSchema(many=True, exclude=["league_id.teams", "users"]).dump(users)
+    return TeamSchema(many=True, exclude=["league_id", "users"]).dump(users)
 
-
-# Register a Team
-# A captain can register a new team. Team names must be unique.
-@teams_bp.route("/", methods=["POST"])
-@jwt_required()
-def register_team():
-    captain_required()
-    try:
-        team_info = TeamSchema(exclude=["id", "date_created", "points", "win", "loss", "draw"]).load(request.json)
-        team = Team(
-            team_name=team_info["team_name"],
-            # date_created=["date_created"],
-            # points=team_info["points"],
-            # win=team_info["win"],
-            # loss=team_info["loss"],
-            # draw=team_info["draw"],
-        )
-
-        db.session.add(team)
-        db.session.commit()
-
-        return TeamSchema().dump(team), 201
-    except IntegrityError:
-        return {"error": "Team name already exists"}, 409 #409 is a conflict
-    
 
 # Get a Team
 # Here the route specifies that we are looking
@@ -61,9 +36,28 @@ def one_team(id):
     team = db.session.scalar(stmt)
     if team:
         # The TeamSchema is returned and league_id.teams is excluded
-        return TeamSchema(exclude=["league_id.teams"]).dump(team)
+        return TeamSchema(exclude=["league_id"]).dump(team)
     else:
         return {"error": "Team not found"}, 404
+
+
+# Register a Team
+# A captain can register a new team. Team names must be unique.
+@teams_bp.route("/", methods=["POST"])
+@jwt_required()
+def register_team():
+    captain_required()
+    try:
+        team_info = TeamSchema(exclude=["id", "date_created", "points", "win", "loss", "draw"]).load(request.json)
+        team = Team(
+            team_name=team_info["team_name"])
+
+        db.session.add(team)
+        db.session.commit()
+
+        return TeamSchema(exclude=["users"]).dump(team), 201
+    except IntegrityError:
+        return {"error": "Team name already exists"}, 409 #409 is a conflict
     
 
 # Update a Team
@@ -83,7 +77,7 @@ def update_team(id):
             team.draw = team_info.get("draw", team.draw)
             team.league = team_info.get("league", team.league)
             db.session.commit()
-            return TeamSchema(exclude=["id",]).dump(team)
+            return TeamSchema(exclude=["id", "league_id", "users"]).dump(team)
         else:
             return {"error": "Team not found"}
     except IntegrityError:

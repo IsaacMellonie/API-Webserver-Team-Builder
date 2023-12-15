@@ -48,7 +48,7 @@ def update_sport(id):
             sport.name = sport_info.get("name", sport.name)
             sport.max_players = sport_info.get("max_players", sport.max_players)
             db.session.commit()
-            return SportSchema(exclude=["id",]).dump(sport)
+            return SportSchema(exclude=["id", "leagues"]).dump(sport)
         else:
             return {"error": "Sport not found"}
     except IntegrityError:
