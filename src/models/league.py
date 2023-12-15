@@ -15,14 +15,16 @@ class League(db.Model):
     start_date = db.Column(db.Date())
     end_date = db.Column(db.Date())
 
-    sport = db.Column(db.Integer, db.ForeignKey("sports.id"), nullable=False) # Foreign Key
+    # Foreign Key - establishes a relationship at the database level
+    sport = db.Column(db.Integer, db.ForeignKey("sports.id")) # Foreign Key
+    # SQLAlchemy relationship - nests an instance of a related model
     sport_id = db.relationship("Sport")
 
 
 # In the LeagueSchema class, all of the fields are defined.
 # This allows client routes to verify the field names. 
 class LeagueSchema(ma.Schema):
-
+    # Tell Marshmallow to nest a SportSchema instance when serialising
     sport_id = fields.Nested("SportSchema")
 
     class Meta:

@@ -104,3 +104,4 @@ def delete_team(id):
         return {}, 200
     else:
         return {"error": "team not found"}
+    

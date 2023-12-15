@@ -33,15 +33,15 @@ class User(db.Model):
     available = db.Column(db.Boolean, default=True)
     phone = db.Column(db.BigInteger())
 
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
     #SQLAlchemy is used to access an instance of the Team model
-    team = db.relationship("Team") 
+    team = db.relationship("Team", back_populates="users") 
 
 # The UserSchema is defined here.
 class UserSchema(ma.Schema):
     # Here the "team" db.relationship needs to be defined so that
     # marshmallow can nest the data.
-    team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw", "league_id"])
+    team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"])
     
     class Meta:
         fields = ("id", "admin", "captain", "date_created",

@@ -23,7 +23,7 @@ def register_user():
     try:
         # Parse incoming POST body through the schema
         # Here the id is excluded from the request
-        user_info = UserSchema(exclude=["id", "admin", "date_created"]).load(request.json) 
+        user_info = UserSchema(exclude=["id", "admin", "date_created", "team_id"]).load(request.json) 
         # Create a new user with the parsed data
         user = User(
             captain=user_info.get("captain"),
@@ -35,7 +35,7 @@ def register_user():
             bio=user_info.get("bio", ""),
             available=user_info.get("available"),
             phone=user_info.get("phone"),
-            team_id=user_info.get("team_id"),
+            team_id=user_info.get("team.id"),
         )
         # Add and commit the new user to the database
         db.session.add(user)

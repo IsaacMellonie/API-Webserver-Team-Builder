@@ -38,10 +38,11 @@ def register_league():
 
 # Update a league
 @leagues_bp.route("/<int:id>", methods=["PUT", "PATCH"])
+@jwt_required()
 def update_league(id):
     admin_required()
     try:
-        league_info = LeagueSchema(exclude=["id", "sport"]).load(request.json)
+        league_info = LeagueSchema(exclude=["id", "sport_id"]).load(request.json)
         stmt = db.select(League).filter_by(id=id)
         league = db.session.scalar(stmt)
         if league:
@@ -60,7 +61,7 @@ def update_league(id):
 
 # Delete a league
 @leagues_bp.route("/<int:id>", methods=["DELETE"])
-@jwt_required
+@jwt_required()
 def delete_league(id):
     admin_required()
     stmt = db.select(League).filter_by(id=id)
