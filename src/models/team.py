@@ -14,7 +14,7 @@ from marshmallow import fields
 class Team(db.Model):
     __tablename__ = "teams"
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
 
     team_name = db.Column(db.String, default="Team Name", nullable=False, unique=True)
     date_created = db.Column(db.Date, default=date.today(), nullable=False)
@@ -23,14 +23,14 @@ class Team(db.Model):
     loss = db.Column(db.Integer, default=0)
     draw = db.Column(db.Integer, default=0)
 
-    league = db.Column(db.Integer(), db.ForeignKey("leagues.id"), nullable=False) #Foreign Key
+    league = db.Column(db.Integer, db.ForeignKey("leagues.id"), nullable=False) #Foreign Key
     league_id = db.relationship("League") 
 
 
 # The Schema is defined
 class TeamSchema(ma.Schema):
 
-    league_id = fields.Nested("LeagueSchema")
+    league_id = fields.Nested("LeagueSchema", exclude=["sport_id"])
 
     class Meta:
         fields = ("id", "team_name", "date_created", "points", "win", "loss", "draw", "league_id")

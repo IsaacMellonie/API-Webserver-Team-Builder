@@ -51,7 +51,7 @@ def register_user():
 @users_bp.route("/login", methods=["POST"])
 def login():
     user_info = UserSchema(exclude=["id", "admin", "date_created", "first", "last", "dob", 
-                                    "bio", "available", "phone", "team_id"]).load(request.json)
+                                    "bio", "available", "phone", "team"]).load(request.json)
     stmt = db.select(User).where(User.email==user_info["email"])
     user = db.session.scalar(stmt)
     if user and bcrypt.check_password_hash(user.password, user_info["password"]):

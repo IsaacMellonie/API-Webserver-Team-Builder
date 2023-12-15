@@ -19,7 +19,7 @@ from marshmallow import fields
 class User(db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
 
     admin = db.Column(db.Boolean, default=False)
     captain = db.Column(db.Boolean, default=False)
@@ -33,7 +33,7 @@ class User(db.Model):
     available = db.Column(db.Boolean, default=True)
     phone = db.Column(db.BigInteger())
 
-    team_id = db.Column(db.Integer(), db.ForeignKey("teams.id"), default=1, nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
     #SQLAlchemy is used to access an instance of the Team model
     team = db.relationship("Team") 
 
@@ -41,7 +41,7 @@ class User(db.Model):
 class UserSchema(ma.Schema):
     # Here the "team" db.relationship needs to be defined so that
     # marshmallow can nest the data.
-    team = fields.Nested("TeamSchema")
+    team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw", "league_id"])
     
     class Meta:
         fields = ("id", "admin", "captain", "date_created",

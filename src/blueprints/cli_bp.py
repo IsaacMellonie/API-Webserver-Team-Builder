@@ -37,19 +37,19 @@ def db_seed():
             name="A",
             start_date="2024-01-11",
             end_date="2024-04-04",
-            sport=1,
+            sport=sports[0].id,
         ),
         League(
             name="B",
             start_date="2024-01-11",
             end_date="2024-04-04",
-            sport=1,
+            sport=sports[0].id,
         ),
         League(
             name="C",
             start_date="2024-01-11",
             end_date="2024-04-04",
-            sport=1,
+            sport=sports[0].id,
         )
     ]
     db.session.add_all(leagues)
@@ -58,39 +58,39 @@ def db_seed():
     teams = [
         Team(
             team_name="Free Agents",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="Get Plastered",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="Bandits",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="Potato Heads",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="Deep Fryers",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="The Gurus",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="Side Steppers",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="Flying X",
-            league=1,
+            league=leagues[0].id,
         ),
         Team(
             team_name="Ducks",
-            league=1,
+            league=leagues[0].id,
         ),
     ]
     db.session.add_all(teams)
@@ -108,7 +108,7 @@ def db_seed():
             bio="Hi, I've been playing touch football for about 10 years. I play middle.",
             available=True,
             phone=1234567890,
-            team_id=2,
+            team_id= teams[1].id,
         ),
         User(
             captain=True,
@@ -119,7 +119,7 @@ def db_seed():
             bio="I usually play on the wing. Not very experienced.",
             available=False,
             phone=8733676222,
-            team_id=3,
+            team_id=teams[2].id,
         ),
         User(
             first="May",
@@ -129,7 +129,7 @@ def db_seed():
             bio="Hi! Excited to meet everyone! Here to have fun and make friends.",
             available=False,
             phone=2331983423,
-            team_id=4,
+            team_id=teams[3].id,
         ),
         User(
             first="Steven",
@@ -140,6 +140,7 @@ def db_seed():
             bio="Pretty new to the game. Here to learn.",
             available=True,
             phone=5164787923,
+            team_id=teams[0].id,
         ),
     ]
     db.session.add_all(users)
