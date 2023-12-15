@@ -41,9 +41,9 @@ class User(db.Model):
 class UserSchema(ma.Schema):
     # Here the "team" db.relationship needs to be defined so that
     # marshmallow can nest the data.
-    team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"])
+    # team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"])
     
     class Meta:
         fields = ("id", "admin", "captain", "date_created",
                   "first", "last", "dob", "email", "password",
-                  "bio", "available", "phone", "team")
+                  "bio", "available", "phone", "team_id")

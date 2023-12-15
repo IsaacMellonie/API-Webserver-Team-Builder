@@ -12,6 +12,7 @@ class Sport(db.Model):
     name = db.Column(db.String, nullable=False, unique=True)
     max_players = db.Column(db.Integer)
 
+    # league_id = db.Column(db.Integer, nullable=True, default=None)
     leagues = db.relationship("League", back_populates="sport_id", cascade="all, delete-orphan")
 
 # SportSchema defines fields with the Marshmallow Schema.
