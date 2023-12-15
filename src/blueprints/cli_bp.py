@@ -58,38 +58,47 @@ def db_seed():
     teams = [
         Team(
             team_name="Free Agents",
+            points=0,
             league=leagues[0].id,
         ),
         Team(
             team_name="Get Plastered",
+            points=10,
             league=leagues[0].id,
         ),
         Team(
             team_name="Bandits",
+            points=4,
             league=leagues[0].id,
         ),
         Team(
             team_name="Potato Heads",
+            points=7,
             league=leagues[0].id,
         ),
         Team(
             team_name="Deep Fryers",
+            points=2,
             league=leagues[0].id,
         ),
         Team(
             team_name="The Gurus",
+            points=9,
             league=leagues[0].id,
         ),
         Team(
             team_name="Side Steppers",
+            points=6,
             league=leagues[0].id,
         ),
         Team(
             team_name="Flying X",
+            points=1,
             league=leagues[0].id,
         ),
         Team(
             team_name="Ducks",
+            points=11,
             league=leagues[0].id,
         ),
     ]
@@ -108,6 +117,19 @@ def db_seed():
             bio="Hi, I've been playing touch football for about 10 years. I play middle.",
             available=True,
             phone=1234567890,
+            team_id= teams[1].id,
+        ),
+        User(
+            admin=False,
+            captain=False,
+            first="Jasper",
+            last="Fez",
+            dob="1989-02-03",
+            email="feral@email.com",
+            password=bcrypt.generate_password_hash("pwd123").decode("utf8"),
+            bio="Let me at 'em.",
+            available=True,
+            phone=3333333333,
             team_id= teams[1].id,
         ),
         User(

@@ -72,3 +72,14 @@ def delete_league(id):
         return {}, 200
     else:
         return {"error": "League not found"}
+    
+# Get a league by id
+@leagues_bp.route("/<int:id>")
+@jwt_required()
+def get_league(id):
+    stmt = db.select(League).filter_by(id=id) # .order_by(League.teams.points.desc())
+    league = db.session.scalar(stmt)
+    if league:
+        return LeagueSchema().dump(league)
+    else:
+        return {"error": "League not found"}, 404

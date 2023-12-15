@@ -68,3 +68,16 @@ def delete_sport(id):
         return {}, 200
     else:
         return {"error": "Sport not found"}
+
+
+
+# Get a sport by id
+@sports_bp.route("/<int:id>")
+@jwt_required()
+def get_sport(id):
+    stmt = db.select(Sport).filter_by(id=id) 
+    league = db.session.scalar(stmt)
+    if league:
+        return SportSchema(exclude=["leagues.teams"]).dump(league)
+    else:
+        return {"error": "League not found"}, 404

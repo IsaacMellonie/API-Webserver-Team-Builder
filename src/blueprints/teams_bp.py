@@ -16,12 +16,12 @@ teams_bp = Blueprint("teams", __name__, url_prefix="/teams")
 
 
 # Get all teams in the database
-@teams_bp.route("/all_teams")
+@teams_bp.route("/teams")
 @jwt_required()
 def all_teams():
     stmt = db.select(Team).order_by(Team.team_name.asc()) # Displays teams in ascending order. Use .desc() to flip around.
     users = db.session.scalars(stmt).all()
-    return TeamSchema(many=True).dump(users)
+    return TeamSchema(many=True, exclude=["league_id.teams", "users"]).dump(users)
 
 
 # Register a Team
@@ -60,7 +60,8 @@ def one_team(id):
     stmt = db.select(Team).filter_by(id=id)
     team = db.session.scalar(stmt)
     if team:
-        return TeamSchema().dump(team)
+        # The TeamSchema is returned and league_id.teams is excluded
+        return TeamSchema(exclude=["league_id.teams"]).dump(team)
     else:
         return {"error": "Team not found"}, 404
     
