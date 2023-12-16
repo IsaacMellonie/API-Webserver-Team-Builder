@@ -1,6 +1,7 @@
 from setup import db, ma 
 from datetime import date 
 from marshmallow import fields
+from marshmallow.validate import Length, Regexp, And
 
 
 # The Team model contains the fields "id", "team_name",
@@ -34,7 +35,20 @@ class Team(db.Model):
 # The Schema is defined
 class TeamSchema(ma.Schema):
 
-    users = fields.List(fields.Nested("UserSchema", exclude=[
+    team_name = fields.String(
+        validate=And(
+            Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."),
+            Length(min=3, max=20, error="Team name must be between 3 and 20 characters long")))
+        
+    date_created = fields.Date()
+    points = fields.Integer()
+    win = fields.Integer()
+    loss = fields.Integer()
+    draw = fields.Integer()
+
+    users = fields.List(
+        fields.Nested(
+        "UserSchema", exclude=[
         "id", "dob", "team", "password", "date_created", "admin",
         ]))
 
@@ -47,8 +61,18 @@ class TeamSchema(ma.Schema):
             )
         
 
-
 class TeamInputSchema(ma.Schema):
+
+    team_name = fields.String(
+    validate=And(
+        Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."),
+        Length(min=3, max=20, error="Team name must be between 3 and 20 characters long")))
+        
+    date_created = fields.Date()
+    points = fields.Integer()
+    win = fields.Integer()
+    loss = fields.Integer()
+    draw = fields.Integer()
 
     users = fields.List(fields.Nested("UserSchema", exclude=[
         "id", "dob", "team", "password", "date_created", "admin",

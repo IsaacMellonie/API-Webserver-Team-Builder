@@ -1,5 +1,6 @@
 from setup import ma, db 
 from marshmallow import fields
+from marshmallow.validate import Regexp
 
 
 # The Sport model defines the columns "id", "name", and "max_players"
@@ -18,6 +19,8 @@ class Sport(db.Model):
 # Fields allow the client routes to retrieve data for the host.
 class SportSchema(ma.Schema):
 
+    name = fields.String(validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+    max_players = fields.Integer(error="Must only be numbers")
     leagues = fields.List(fields.Nested("LeagueSchema", exclude=["sport_id"]))
 
     class Meta:

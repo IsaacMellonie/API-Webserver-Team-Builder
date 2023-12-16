@@ -1,5 +1,6 @@
 from setup import ma, db 
 from marshmallow import fields
+from marshmallow.validate import Regexp
 
 
 # Here the League model is defined with db.Model.
@@ -40,6 +41,11 @@ class LeagueSchema(ma.Schema):
 
 
 class LeagueInputSchema(ma.Schema):
+
+    name = fields.String(
+        validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+    start_date = fields.Date()
+    end_date = fields.Date()
 
     teams = fields.List(fields.Nested(
         "TeamSchema", exclude=[

@@ -1,7 +1,7 @@
 from setup import db, ma
 from datetime import date
 from marshmallow import fields
-from marshmallow.validate import Length, Regexp, ValidationError
+from marshmallow.validate import Length, Regexp
 
 # User model is defined with fields for id, admin,
 # captain, date_created, first, last, dob, email, 
@@ -41,23 +41,32 @@ class User(db.Model):
 
 # The UserSchema is defined here.
 class UserSchema(ma.Schema):
+
     admin = fields.Boolean()
     captain = fields.Boolean()
     date_created = fields.Date()
-    first = fields.String()
-    last = fields.String()
     dob = fields.Date()
-    bio = fields.String()
+
+    first = fields.String(
+        validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+    
+    last = fields.String(
+        validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+
+    bio = fields.String(
+        validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+    
     available = fields.Boolean()
-    phone = fields.Integer()
+    phone = fields.Integer(validate=lambda p: 10 <= len(str(p)))
     email = fields.Email()
-    password = fields.String(validate=[Length(min=6, max=12), 
-                            Regexp(r".*[A-Z].*", error="Password must contain at least one uppercase letter"),
-                            Regexp(r".*[a-z].*", error="Password must contain at least one lowercase letter"),
-                            Regexp(r".*[@#$%!^&+=].*", error="Password must contain at least one special character")
-                            ])
-
-
+    
+    password = fields.String(
+        validate=[Length(min=6, max=12), 
+        Regexp(r".*[A-Z].*", error="Password must contain at least one uppercase letter"),
+        Regexp(r".*[a-z].*", error="Password must contain at least one lowercase letter"),
+        Regexp(r".*[@#$%!^&+=].*", error="Password must contain at least one special character")
+        ])
+    
     # Here the "team" db.relationship needs to be defined so that
     # marshmallow can nest the data.
     team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"])
