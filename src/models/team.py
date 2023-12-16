@@ -54,8 +54,6 @@ class TeamInputSchema(ma.Schema):
         "id", "dob", "team", "password", "date_created", "admin",
         ]))
 
-    league_id = fields.Nested("LeagueSchema", exclude=["sport_id"])
-
     class Meta:
         fields = (
             "id", "team_name", "date_created", "points", 

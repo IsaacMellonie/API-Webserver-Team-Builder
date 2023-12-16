@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from marshmallow.exceptions import ValidationError
 from os import environ
 
 # The module is initialised and assigned to
@@ -44,3 +45,6 @@ def unauthorized(err):
     return {"error": "You are not authorised to access this resource"}
 
 
+@app.errorhandler(ValidationError)
+def validation_error(err):
+    return {"error": err.messages}

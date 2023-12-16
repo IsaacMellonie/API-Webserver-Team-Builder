@@ -45,20 +45,24 @@ def register_user():
         return UserSchema(exclude=["password", "team"]).dump(user), 201 
     except IntegrityError:
         return {"error": "Email address already exists"}, 409 # 409 is a conflict
+    except KeyError:
+        return {"error": "Invalid fields"}
 
 
 # This is the login route for users
 @users_bp.route("/login", methods=["POST"])
 def login():
-    user_info = UserSchema(exclude=["id", "admin", "date_created", "first", "last", "dob", 
-                                    "bio", "available", "phone", "team"]).load(request.json)
-    stmt = db.select(User).where(User.email==user_info["email"])
-    user = db.session.scalar(stmt)
-    if user and bcrypt.check_password_hash(user.password, user_info["password"]):
-        token = create_access_token(identity=user.email, expires_delta=timedelta(hours=10))
-        return {"token": token, "user": UserSchema(only=["first", "last", "email", "team.id"]).dump(user)}
-    else:
-        return {"error": "Invalid email or password"}, 401
+    try:
+        user_info = UserSchema(only=["email", "password"]).load(request.json)
+        stmt = db.select(User).where(User.email==user_info["email"])
+        user = db.session.scalar(stmt)
+        if user and bcrypt.check_password_hash(user.password, user_info["password"]):
+            token = create_access_token(identity=user.email, expires_delta=timedelta(hours=10))
+            return {"token": token, "user": UserSchema(only=["first", "last", "email", "team.id"]).dump(user)}
+        else:
+            return {"error": "Invalid email or password"}, 401
+    except KeyError:
+        return {"error": "Must have email and password fields"}
 
 
 # Get all captains
@@ -70,7 +74,7 @@ def captains():
     # to run it through an OR operator, wrap it with db._or() function.
     # eg. stmt = db.select(User).where(db.or_(User.captain, User.team_id == 1))
     # use the .order_by() function to sort the results
-    stmt = db.select(User).where(User.captain)#, User.team_id == 1)#.order_by(User.date_created) 
+    stmt = db.select(User).where(User.captain)
     users = db.session.scalars(stmt)
     return UserSchema(many=True, exclude=["password", "team.league_id", 
                                           "team.users", "team.points"]).dump(users)
