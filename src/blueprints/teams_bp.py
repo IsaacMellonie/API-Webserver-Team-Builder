@@ -21,7 +21,7 @@ teams_bp = Blueprint("teams", __name__, url_prefix="/teams")
 def all_teams():
     stmt = db.select(Team).order_by(Team.team_name.asc()) # Displays teams in ascending order. Use .desc() to flip around.
     users = db.session.scalars(stmt).all()
-    return TeamSchema(many=True, exclude=["league_id", "users"]).dump(users)
+    return TeamSchema(many=True, exclude=["users", "league_id"]).dump(users)
 
 
 # Get a Team
@@ -36,7 +36,7 @@ def one_team(id):
     team = db.session.scalar(stmt)
     if team:
         # The TeamSchema is returned and league_id.teams is excluded
-        return TeamSchema(exclude=["league_id"]).dump(team)
+        return TeamSchema(exclude=["league_id", "users", "league_id"]).dump(team)
     else:
         return {"error": "Team not found"}, 404
 
@@ -51,7 +51,7 @@ def register_team():
         team_info = TeamSchema(exclude=["id", "date_created", "points", "win", "loss", "draw"]).load(request.json)
         team = Team(
             team_name=team_info["team_name"],
-            league=team_info.get("league")
+            # league=team_info.get("league")
             )
 
         db.session.add(team)

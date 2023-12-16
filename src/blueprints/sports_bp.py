@@ -80,4 +80,4 @@ def get_sport(id):
     if league:
         return SportSchema(exclude=["leagues.teams"]).dump(league)
     else:
-        return {"error": "League not found"}, 404
+        return {"error": "Sport not found"}, 404

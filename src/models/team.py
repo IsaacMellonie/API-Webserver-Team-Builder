@@ -25,10 +25,10 @@ class Team(db.Model):
     
     # The relationship with the User model is made, then
     # backpopulates the "team" relationship.
-    users = db.relationship("User", back_populates="team")
+    users = db.relationship("User", back_populates="team", cascade="all")
 
     league = db.Column(db.Integer, db.ForeignKey("leagues.id")) #Foreign Key
-    league_id = db.relationship("League", back_populates="teams") 
+    league_id = db.relationship("League", back_populates="teams", cascade="all") 
 
 
 # The Schema is defined
@@ -36,12 +36,12 @@ class TeamSchema(ma.Schema):
 
     users = fields.List(fields.Nested("UserSchema", exclude=[
         "id", "dob", "team", "password", "date_created", "admin",
-        ]))
+        ], many=True))
 
-    # league_id = fields.Nested("LeagueSchema", exclude=["sport_id"])
+    league_id = fields.List(fields.Nested("LeagueSchema", exclude=["sport_id"]))
 
     class Meta:
         fields = (
             "id", "team_name", "date_created", "points", 
-            "win", "loss", "draw", "league", "users"
+            "win", "loss", "draw", "league_id", "users"
             )

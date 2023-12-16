@@ -16,12 +16,12 @@ class League(db.Model):
     end_date = db.Column(db.Date())
 
 
-    teams = db.relationship("Team", back_populates="league_id")
+    teams = db.relationship("Team", back_populates="league_id", cascade="all")
 
     # Foreign Key - establishes a relationship at the database level
     sport = db.Column(db.Integer, db.ForeignKey("sports.id"), nullable=False) # Foreign Key
     # SQLAlchemy relationship - nests an instance of a related model
-    sport_id = db.relationship("Sport", back_populates="leagues")
+    sport_id = db.relationship("Sport", back_populates="leagues", cascade="all") # Foreign Key
 
 
 # In the LeagueSchema class, all of the fields are defined.
@@ -36,4 +36,4 @@ class LeagueSchema(ma.Schema):
     # sport_id = fields.Nested("SportSchema", exclude=["leagues"])
 
     class Meta:
-        fields = ("id", "name", "start_date", "end_date", "sport", "teams")
+        fields = ("id", "name", "start_date", "end_date", "sport_id", "teams")

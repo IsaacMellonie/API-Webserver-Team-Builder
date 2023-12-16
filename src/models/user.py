@@ -35,13 +35,13 @@ class User(db.Model):
 
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
     #SQLAlchemy is used to access an instance of the Team model
-    team = db.relationship("Team", back_populates="users") 
+    team = db.relationship("Team", back_populates="users", cascade="all") 
 
 # The UserSchema is defined here.
 class UserSchema(ma.Schema):
     # Here the "team" db.relationship needs to be defined so that
     # marshmallow can nest the data.
-    # team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"])
+    team = fields.List(fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"]))
     
     class Meta:
         fields = ("id", "admin", "captain", "date_created",

@@ -58,7 +58,7 @@ def login():
     user = db.session.scalar(stmt)
     if user and bcrypt.check_password_hash(user.password, user_info["password"]):
         token = create_access_token(identity=user.email, expires_delta=timedelta(hours=10))
-        return {"token": token, "user": UserSchema(only=["first", "last", "email", "team.id"]).dump(user)}
+        return {"token": token, "user": UserSchema(only=["first", "last", "email"]).dump(user)}
     else:
         return {"error": "Please use a unique email address and enter a valid team id."}, 401
 
@@ -74,8 +74,7 @@ def captains():
     # use the .order_by() function to sort the results
     stmt = db.select(User).where(User.captain)#, User.team_id == 1)#.order_by(User.date_created) 
     users = db.session.scalars(stmt)
-    return UserSchema(many=True, exclude=["password", "team.league_id", 
-                                          "team.users", "team.points"]).dump(users)
+    return UserSchema(many=True, exclude=["password"]).dump(users)
     
 
 # Get Free Agents users on team id=1. This is useful for captains
@@ -87,8 +86,7 @@ def free_agents():
     # select all users that are not assigned a team;
     stmt = db.select(User).where(db.and_(User.captain != True, User.team_id == 1))
     users = db.session.scalars(stmt).all()
-    return UserSchema(many=True, exclude=["password", "team.league_id", 
-                                          "team.users", "team.points"]).dump(users)
+    return UserSchema(many=True, exclude=["password"]).dump(users)
 
 
 # Update the user information stored in the database.
@@ -98,7 +96,7 @@ def update_user(id):
     user_id_required(id)
     try:
         user_info = UserSchema(exclude=["id", "admin", "date_created", 
-                                        "captain"]).load(request.json)
+                                        "captain", "team"]).load(request.json)
         stmt = db.select(User).filter_by(id=id)
         user = db.session.scalar(stmt)
         if user: # Add and user email == email
@@ -111,10 +109,9 @@ def update_user(id):
             user.bio = user_info.get("bio", user.bio)
             user.available = user_info.get("available", user.available)
             user.phone = user_info.get("phone", user.phone)
-            user.team_id = user_info.get("team_id", user.team_id)
             db.session.commit()
             return UserSchema(exclude=["admin", "date_created",
-                                       "password" ]).dump(user)
+                                       "password", "team" ]).dump(user)
         else:
             return {"error": "User not found"}, 404
     except IntegrityError:

@@ -83,6 +83,6 @@ def get_league(id):
     stmt = db.select(League).filter_by(id=id) # .order_by(League.teams.points.desc())
     league = db.session.scalar(stmt)
     if league:
-        return LeagueSchema().dump(league)
+        return LeagueSchema(exclude=["teams"]).dump(league)
     else:
         return {"error": "League not found"}, 404
