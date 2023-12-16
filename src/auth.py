@@ -4,12 +4,12 @@ from flask_jwt_extended import get_jwt_identity
 from setup import db
 
 
-# AA sperate auth module was created for storing
+# AA seperate auth module was created for storing
 # functions that assist with authentication on our
 # bluprint routes.
 
 # The admin_required function allows us to modularise
-# for reuse later. THis function finds whether a user
+# for reuse later. This function finds whether a user
 # exists and whether that users' email matches the
 # the one entered.
 
@@ -23,7 +23,10 @@ def admin_required():
         abort(401)
 
 
-# A captain level user can update team details.
+
+# captain_required checks if the user, identified by JWT email,
+# is a captain or admin; if not, it aborts with a 401 error,
+# ensuring secure team updates.
 def captain_required():
     user_email = get_jwt_identity()
     stmt = db.select(User).where(User.email == user_email)
@@ -32,8 +35,10 @@ def captain_required():
         abort(401)
 
 
-# The id input to the url must match the user.team_id and
-# the user must be a captain level user to update team details.
+# captain_id_required validates that the requesting user,
+# identified by JWT email, matches the team ID and holds
+# captain or admin status; if not, it aborts with a 401,
+# ensuring authorized team detail updates.
 def captain_id_required(id):
     user_email = get_jwt_identity()
     stmt = db.select(User).where(User.email == user_email)
@@ -42,18 +47,13 @@ def captain_id_required(id):
         abort(401)
 
 
-# User id input must match the user's id and user email must match.
+
+# user_id_required verifies that the user, identified by JWT email
+# and matching user ID, exists; otherwise, it aborts with a 401 error,
+# ensuring authorized user data access.
 def user_id_required(id):
     user_email = get_jwt_identity()
     stmt = db.select(User).where(User.email == user_email, User.id == id)
     user = db.session.scalar(stmt)
     if not user:
         abort(401)
-
-
-# def authorise(user_id=None):
-#     jwt_user_id = get_jwt_identity()
-#     stmt = db.select(User).filter_by(id=jwt_user_id)
-#     user = db.session.scalar(stmt)
-#     if not (user.admin or (user_id and jwt_user_id == user_id)):
-#         abort(401)

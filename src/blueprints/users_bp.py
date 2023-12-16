@@ -17,7 +17,18 @@ from auth import admin_required, captain_required, user_id_required
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
-# This route registers a user. The user must enter, first name, last name, email and pasword.
+
+# The register_user function in users_bp, accessible via 
+# POST request, handles new user registrations. It parses 
+# and validates incoming user data with UserSchema, excluding 
+# certain fields. The function then creates a new User object 
+# with the provided details, including securely hashed passwords, 
+# and adds it to the database. Upon successful registration, 
+# it returns serialized user data, excluding sensitive 
+# information like passwords. The function also manages 
+# data integrity and key errors, ensuring unique email addresses 
+# and valid field inputs, enhancing security and data consistency 
+# in user management.
 @users_bp.route("/", methods=["POST"])
 def register_user():
     try:
@@ -49,7 +60,13 @@ def register_user():
         return {"error": "Invalid fields"}
 
 
-# This is the login route for users
+
+# The login function in users_bp, for POST requests, handles 
+# user logins. It validates email and password, checks credentials 
+# against the database, and if successful, generates a JWT token 
+# with a 10-hour expiry. Returns a token and user details on successful 
+# login. If not, it provides an error for invalid credentials or missing 
+# fields, ensuring user authentication.
 @users_bp.route("/login", methods=["POST"])
 def login():
     try:
@@ -65,7 +82,14 @@ def login():
         return {"error": "Must have email and password fields"}
 
 
-# Get all captains
+# The captains function in users_bp, secured with JWT authentication,
+# retrieves all users who are team captains. It uses a SQLAlchemy query
+# to select users where the captain field is true, executing the query to
+# fetch the results. The function then serializes the captain data, excluding
+# specific fields like 'password' and certain team-related attributes, and
+# returns this data. This setup provides an efficient way to access and display
+# captain information within the application, ensuring data security and
+# streamlined access to user roles.
 @users_bp.route("/captains")
 @jwt_required()
 def captains():
@@ -80,8 +104,14 @@ def captains():
                                           "team.users", "team.points"]).dump(users)
     
 
-# Get Free Agents users on team id=1. This is useful for captains
-# and admins who need to find players.
+# THis route is protected by JWT 
+# and accessible only to captains. It fetches users who are potential 
+# free agents (not team captains and assigned to team ID 1). It uses 
+# a SQLAlchemy query with conditions to select such users, then serializes 
+# and returns their data, excluding fields 'password' and specific team 
+# details. This function efficiently identifies available 
+# players for team recruitment, providing captains and admins with crucial 
+# information for team management and player selection in the application.
 @users_bp.route("/freeagents")
 @jwt_required()
 def free_agents():
@@ -93,7 +123,13 @@ def free_agents():
                                           "team.users", "team.points"]).dump(users)
 
 
-# Update the user information stored in the database.
+# The update_user function in users_bp, using PUT/PATCH methods and 
+# secured with JWT, allows authenticated users to update their profiles. 
+# It ensures data validation and handles unique email constraints, 
+# updating user details in the database and returning serialized user data, 
+# excluding sensitive information. This function enhances user profile 
+# management, providing error handling for non-existent users and email 
+# conflicts.
 @users_bp.route("/<int:id>", methods=["PUT", "PATCH"])
 @jwt_required()
 def update_user(id):
@@ -124,7 +160,13 @@ def update_user(id):
         return {"error": "Email address already exists"}, 409 # 409 is a conflict
     
 
-# Delete user from database
+# The delete_user function is secured with JWT and requiring admin 
+# privileges. It allows for the deletion of a user by their id. 
+# It verifies the user's existence in the database and, if found, 
+# deletes and commits the change. Successful deletion returns a 200 
+# status, while a non-existent user triggers a 404 error response. 
+# This setup ensures secure and accurate user deletion within the 
+# application.
 @users_bp.route("/<int:id>", methods=["DELETE"])
 @jwt_required()
 def delete_user(id):

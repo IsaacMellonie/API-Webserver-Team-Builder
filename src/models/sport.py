@@ -3,8 +3,10 @@ from marshmallow import fields
 from marshmallow.validate import Regexp
 
 
-# The Sport model defines the columns "id", "name", and "max_players"
-# using SQLAlchemy db.Model.
+# The Sport class is an SQLAlchemy model that represents sports with 
+# unique IDs, names, and maximum player counts. It includes a 
+# relationship with the League model, enabling database level 
+# linkage and cascade delete operations.
 class Sport(db.Model):
     __tablename__ = "sports"
 
@@ -15,8 +17,11 @@ class Sport(db.Model):
 
     leagues = db.relationship("League", back_populates="sport_id", cascade="all, delete")
 
-# SportSchema defines fields with the Marshmallow Schema.
-# Fields allow the client routes to retrieve data for the host.
+
+# The SportSchema class uses Marshmallow to define validation for 
+# sports data, including name and max players. It also serializes 
+# related league data, excluding the sport_id, facilitating data 
+# exchange between client routes and the host.
 class SportSchema(ma.Schema):
 
     name = fields.String(validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))

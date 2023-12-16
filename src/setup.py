@@ -45,6 +45,9 @@ def unauthorized(err):
     return {"error": "You are not authorised to access this resource"}
 
 
+# A general error handler for ValidationError's are handled within
+# this funcltion. It returns appropriate error messages based on
+# marshmallow.exceptions import.
 @app.errorhandler(ValidationError)
 def validation_error(err):
     return {"error": err.messages}

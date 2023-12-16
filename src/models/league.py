@@ -12,7 +12,7 @@ class League(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
 
-    name = db.Column(db.String, unique=True)
+    name = db.Column(db.String)
     start_date = db.Column(db.Date())
     end_date = db.Column(db.Date())
 
@@ -40,6 +40,9 @@ class LeagueSchema(ma.Schema):
         fields = ("id", "name", "start_date", "end_date", "sport_id", "teams")
 
 
+# LeagueInputSchema is differnet to LeagueSchema only slightly. It has "sport"
+# included in the class Meta instead of "sport_id". This second schema was created
+# so that the user could assign a sport through the input fields.
 class LeagueInputSchema(ma.Schema):
 
     name = fields.String(

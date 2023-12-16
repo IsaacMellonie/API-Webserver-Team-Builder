@@ -39,7 +39,15 @@ class User(db.Model):
     team = db.relationship("Team", back_populates="users") 
 
 
-# The UserSchema is defined here.
+# The UserSchema class is a Marshmallow schema designed for user 
+# data validation and serialization. It includes fields for 
+# administrative and captain status, creation date, date of birth, 
+# first and last names with character validation, and contact information. 
+# The password field is validated for length, case sensitivity, and 
+# special characters. Additionally, it defines a nested relationship 
+# with the TeamSchema, excluding certain team fields. This schema is 
+# crucial for securely managing user data, ensuring data integrity, and 
+# facilitating nested data representation in Flask applications.
 class UserSchema(ma.Schema):
 
     admin = fields.Boolean()
@@ -53,8 +61,7 @@ class UserSchema(ma.Schema):
     last = fields.String(
         validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
 
-    bio = fields.String(
-        validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+    bio = fields.String()
     
     available = fields.Boolean()
     phone = fields.Integer(validate=lambda p: 10 <= len(str(p)))
@@ -71,7 +78,6 @@ class UserSchema(ma.Schema):
     # marshmallow can nest the data.
     team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"])
 
-    
     class Meta:
         fields = ("id", "admin", "captain", "date_created",
                   "first", "last", "dob", "email", "password",

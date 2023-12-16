@@ -32,9 +32,12 @@ class Team(db.Model):
     league_id = db.relationship("League", back_populates="teams") 
 
 
-# The Schema is defined
-class TeamSchema(ma.Schema):
 
+# The TeamSchema class is a Marshmallow schema that validates and serializes 
+# team data, including name validation with specific character and 
+# length constraints. It also handles nested user and league data, 
+# selectively excluding certain fields.
+class TeamSchema(ma.Schema):
     team_name = fields.String(
         validate=And(
             Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."),
@@ -46,9 +49,7 @@ class TeamSchema(ma.Schema):
     loss = fields.Integer()
     draw = fields.Integer()
 
-    users = fields.List(
-        fields.Nested(
-        "UserSchema", exclude=[
+    users = fields.List(fields.Nested("UserSchema", exclude=[
         "id", "dob", "team", "password", "date_created", "admin",
         ]))
 
@@ -60,7 +61,12 @@ class TeamSchema(ma.Schema):
             "win", "loss", "draw", "league_id", "users"
             )
         
-
+# The TeamInputSchema schema is almost identical to TeamSchema. The 
+# difference is that the nested league_id is changed so that the id
+# can be entered directly into the column. I could not find another
+# solution within the project time frame. It's not the most DRY
+# solution but it achieves the goal of allowing league id
+# updates at a later date.
 class TeamInputSchema(ma.Schema):
 
     team_name = fields.String(
