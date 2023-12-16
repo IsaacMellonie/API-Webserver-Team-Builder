@@ -50,21 +50,17 @@ def register_team():
     try:
         team_info = TeamSchema(exclude=["id", "date_created", "points", "win", "loss", "draw"]).load(request.json)
         team = Team(
-            team_name=team_info["team_name"],
-            league=team_info.get("league")
-            )
+            team_name=team_info["team_name"])
 
         db.session.add(team)
         db.session.commit()
 
         return TeamSchema(exclude=["users"]).dump(team), 201
     except IntegrityError:
-        return {"error": "Enter a unique team name and valid league id"}, 409 #409 is a conflict
+        return {"error": "Team name already exists"}, 409 #409 is a conflict
     
 
 # Update a Team
-# The id in the route must match the user's team_id.
-# They must also be a captain or admin level user.
 @teams_bp.route("/<int:id>", methods=["PUT", "PATCH"])
 @jwt_required()
 def update_team(id):
@@ -81,7 +77,7 @@ def update_team(id):
             team.draw = team_info.get("draw", team.draw)
             team.league = team_info.get("league", team.league)
             db.session.commit()
-            return TeamSchema(exclude=["id", "users"]).dump(team)
+            return TeamSchema(exclude=["id", "league_id", "users"]).dump(team)
         else:
             return {"error": "Team not found"}
     except IntegrityError:
