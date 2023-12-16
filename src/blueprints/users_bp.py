@@ -45,8 +45,6 @@ def register_user():
         return UserSchema(exclude=["password", "team"]).dump(user), 201 
     except IntegrityError:
         return {"error": "Email address already exists"}, 409 # 409 is a conflict
-    # except KeyError:
-    #     return {"error": "Invalid team "}
 
 
 # This is the login route for users
@@ -114,7 +112,8 @@ def update_user(id):
             user.team_id = user_info.get("team_id", user.team_id)
             db.session.commit()
             return UserSchema(exclude=["admin", "date_created",
-                                       "password" ]).dump(user)
+                                       "password", "team.league_id",
+                                       "team.users", "team.points" ]).dump(user)
         else:
             return {"error": "User not found"}, 404
     except IntegrityError:
