@@ -20,20 +20,23 @@ leagues_bp = Blueprint("leagues", __name__, url_prefix="/leagues")
 @leagues_bp.route("/", methods=["POST"])
 @jwt_required()
 def register_league():
-    admin_required()
-    
-    league_info = LeagueSchema(exclude=["id"]).load(request.json)
-    league = League(
-        name=league_info["name"],
-        start_date=league_info["start_date"],
-        end_date=league_info["end_date"],
-        sport=league_info["sport_id"]
-    )
+    try:
+        admin_required()
+        
+        league_info = LeagueSchema(exclude=["id"]).load(request.json)
+        league = League(
+            name=league_info["name"],
+            start_date=league_info["start_date"],
+            end_date=league_info["end_date"],
+            sport=league_info["sport"]
+        )
 
-    db.session.add(league)
-    db.session.commit()
+        db.session.add(league)
+        db.session.commit()
 
-    return LeagueSchema(exclude=["id"]).dump(league), 201
+        return LeagueSchema(exclude=["id"]).dump(league), 201
+    except IntegrityError:
+        return {"error": "Make sure name is unique and sport id is valid"}
 
 
 # Update a league

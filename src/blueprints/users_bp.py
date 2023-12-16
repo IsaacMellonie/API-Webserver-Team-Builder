@@ -60,7 +60,7 @@ def login():
         token = create_access_token(identity=user.email, expires_delta=timedelta(hours=10))
         return {"token": token, "user": UserSchema(only=["first", "last", "email", "team.id"]).dump(user)}
     else:
-        return {"error": "Invalid email or password"}, 401
+        return {"error": "Please use a unique email address and enter a valid team id."}, 401
 
 
 # Get all captains
@@ -118,8 +118,7 @@ def update_user(id):
         else:
             return {"error": "User not found"}, 404
     except IntegrityError:
-        return {"error": "Email address already exists"}, 409 # 409 is a conflict
-    
+        return {"error": "Please use a unique email address and enter a valid team id."}, 409 # 409 is a conflict
 
 # Delete user from database
 @users_bp.route("/<int:id>", methods=["DELETE"])
