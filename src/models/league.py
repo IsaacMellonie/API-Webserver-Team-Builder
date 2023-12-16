@@ -37,3 +37,16 @@ class LeagueSchema(ma.Schema):
 
     class Meta:
         fields = ("id", "name", "start_date", "end_date", "sport_id", "teams")
+
+
+class LeagueInputSchema(ma.Schema):
+
+    teams = fields.List(fields.Nested(
+        "TeamSchema", exclude=[
+            "league_id", "date_created", "id", "users"
+            ]))
+    # Tell Marshmallow to nest a SportSchema instance when serialising
+    sport_id = fields.Nested("SportSchema", exclude=["leagues"])
+
+    class Meta:
+        fields = ("id", "name", "start_date", "end_date", "sport", "teams")

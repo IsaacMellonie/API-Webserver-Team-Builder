@@ -3,7 +3,7 @@ from setup import db
 from sqlalchemy.exc import IntegrityError, DataError
 from flask import request
 from flask_jwt_extended import jwt_required
-from models.team import Team, TeamSchema
+from models.team import Team, TeamSchema, TeamInputSchema
 from auth import captain_required, admin_required, captain_id_required
 
 
@@ -66,7 +66,7 @@ def register_team():
 def update_team(id):
     captain_id_required(id)
     try:
-        team_info = TeamSchema(exclude=["id", "date_created"]).load(request.json)
+        team_info = TeamInputSchema(exclude=["id", "date_created"]).load(request.json)
         stmt = db.select(Team).filter_by(id=id)
         team = db.session.scalar(stmt)
         if team:
@@ -77,11 +77,11 @@ def update_team(id):
             team.draw = team_info.get("draw", team.draw)
             team.league = team_info.get("league", team.league)
             db.session.commit()
-            return TeamSchema(exclude=["id", "league_id", "users"]).dump(team)
+            return TeamInputSchema(exclude=["id", "users"]).dump(team)
         else:
             return {"error": "Team not found"}
     except IntegrityError:
-        return {"error": "Team already exists."}, 409 # 409 is a conflict
+        return {"error": "Enter a valid league and unique team name."}, 409 # 409 is a conflict
     except DataError:
         return {"error": "Integers only for points, win, loss, and draw."}, 409 # 409 is a conflict
 

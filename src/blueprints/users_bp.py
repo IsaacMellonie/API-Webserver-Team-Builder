@@ -109,7 +109,7 @@ def update_user(id):
             user.bio = user_info.get("bio", user.bio)
             user.available = user_info.get("available", user.available)
             user.phone = user_info.get("phone", user.phone)
-            user.team_id = user_info.get("team_id", user.team_id)
+            user.team_id = user_info.get("team_id.teams.id", user.team_id)
             db.session.commit()
             return UserSchema(exclude=["admin", "date_created",
                                        "password", "team.league_id",

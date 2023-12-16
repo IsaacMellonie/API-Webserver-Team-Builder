@@ -2,7 +2,7 @@ from flask import Blueprint
 from setup import db
 from flask import request
 from flask_jwt_extended import jwt_required
-from models.league import League, LeagueSchema
+from models.league import League, LeagueSchema, LeagueInputSchema
 from sqlalchemy.exc import IntegrityError, DataError
 from auth import admin_required
 
@@ -20,21 +20,23 @@ leagues_bp = Blueprint("leagues", __name__, url_prefix="/leagues")
 @leagues_bp.route("/", methods=["POST"])
 @jwt_required()
 def register_league():
-    admin_required()
-    
-    league_info = LeagueSchema(exclude=["id"]).load(request.json)
-    league = League(
-        name=league_info["name"],
-        start_date=league_info["start_date"],
-        end_date=league_info["end_date"],
-        sport=league_info["sport_id"]
-    )
+    try:
+        admin_required()
+        
+        league_info = LeagueInputSchema(exclude=["id"]).load(request.json)
+        league = League(
+            name=league_info["name"],
+            start_date=league_info["start_date"],
+            end_date=league_info["end_date"],
+            sport=league_info["sport"]
+        )
 
-    db.session.add(league)
-    db.session.commit()
+        db.session.add(league)
+        db.session.commit()
 
-    return LeagueSchema(exclude=["id"]).dump(league), 201
-
+        return LeagueInputSchema(exclude=["id"]).dump(league), 201
+    except IntegrityError:
+        return {"error": "Enter a unique league name and valid sport id"}
 
 # Update a league
 @leagues_bp.route("/<int:id>", methods=["PUT", "PATCH"])
@@ -42,22 +44,22 @@ def register_league():
 def update_league(id):
     admin_required()
     try:
-        league_info = LeagueSchema(exclude=["id", "sport_id"]).load(request.json)
+        league_info = LeagueInputSchema(exclude=["id"]).load(request.json)
         stmt = db.select(League).filter_by(id=id)
         league = db.session.scalar(stmt)
         if league:
             league.name = league_info.get("name", league.name)
             league.start_date = league_info.get("start_date", league.start_date)
             league.end_date = league_info.get("end_date", league.end_date)
+            league.sport =league_info.get("sport", league.sport)
             db.session.commit()
-            return LeagueSchema(exclude=["id", "teams", "sport_id"]).dump(league)
+            return LeagueInputSchema(exclude=["id", "teams"]).dump(league)
         else:
             return {"error": "League not found"}
     except DataError:
         return {"error": "Name length must be one character"}, 409 # 409 is a conflict
     except IntegrityError:
-        return {"error": "League name already exists"}, 409
-
+        return {"error": "Enter a unique league name and valid sport id"}
 
 # Delete a league
 @leagues_bp.route("/<int:id>", methods=["DELETE"])
