@@ -1,7 +1,24 @@
 # API Webserver Project
-## "Pick-Up" Team Builder
+## TeamUp Team Builder
 
 ### Installation and Setup
+
+#### Run WSL and enter the following commands:
+- Start PostgreSQL - ```sudo -u postgres psql```
+- Create the database - ```create database teamup```
+
+#### In either WSL or VSCode enter the following commands:
+- Create a virtual environment - ```python3 -m venv .venv```
+- Install the required modules - ```pip install -r requirements.txt```
+- ```flask db create```
+- ```flask db seed```
+- ```flask run```
+- To drop the database if needed - ```flask db drop```
+- In .flaskenv.sample, change name to .flaskenv
+- FLASK_DEBUG=true
+- Create a JWT sign-in key e.g. "jwt_key"
+- Set the DB_URI connection string
+- Open Insomnia and use http://127.0.0.1:5550
 
 ---
 ### R1 Problem Identification
@@ -295,6 +312,24 @@ IF there's a match, a JWT token will be generated allowing a user to use the app
 
 ![Update Team](./docs/endpoints/teams-update-team.jpg)
 
+## Endpoint Error Handling
+
+- Some general handlers were written which are in setup.py as well as specific handlers for each route.
+
+![error 01](./docs/error-handling/error-handling-01.jpg)
+![error 02](./docs/error-handling/error-handling-02.jpg)
+![error 03](./docs/error-handling/error-handling-03.jpg)
+![error 04](./docs/error-handling/error-handling-04.jpg)
+![error 05](./docs/error-handling/error-handling-05.jpg)
+![error 06](./docs/error-handling/error-handling-06.jpg)
+![error 07](./docs/error-handling/error-handling-07.jpg)
+![error 08](./docs/error-handling/error-handling-08.jpg)
+![error 09](./docs/error-handling/error-handling-09.jpg)
+![error 10](./docs/error-handling/error-handling-10.jpg)
+![error 11](./docs/error-handling/error-handling-11.jpg)
+![error 12](./docs/error-handling/error-handling-12.jpg)
+![error 13](./docs/error-handling/error-handling-13.jpg)
+
 ---
 ### R6 An ERD for your app
 Here is the ERD for my API. I didn't settle on a final draft until a few days into coding. It was a setback to the whole process, but getting this correct was critical for the development of the api. Taking time to set the foundations of all the entitiy relationship proved to be critical in moving ahead with the rest of the API. I initally created a ladder table to store all team information like points, win, loss,, draw. This would have taken up valuable data in the database. All of the these details are now stored with each team in the "teams" entity.
@@ -359,7 +394,16 @@ max_players. It also has a back populates 1 to many relationship with "leagues",
 ---
 ### R10 Describe the way tasks are allocated and tracked in your project
 
-## [Trello Board Link](https://trello.com/b/tE3trBbi/team-builder)
+Tasks are broken up into two major parts, all tasks related to the workbook and planning side. The other is the relational database creation and coding choices. I used a task-tracking website called Trello. I created a board and broke down all the README requirements from R1 to R10. The workbook portion was heavily weighted in terms of the marking criteria so I decided to focus more time on the planning and documentation of the API. Realising this was the case made it clear how critical the planning phase is and the marking criteria reflect this. I made regular adjustments to my Trello board. It was a useful tool in the tracking of the tasks that remained.
+
+I found that daily stand-ups were crucial as they provided a chance to reflect on the process so far, which forced me to evaluate any areas I think I did well in, and others that needed improving. I will make sure to utilise this more in future projects, as it serves as a way to gauge one's progression and skill development, as well as allow others to see your ideas.
+
+Finally, I made sure to commit regularly. I have a background in animation, where computers and programs crash multiple times daily. This experience has taught me that committing often is extremely important as it allows many roll-back points, and also serves as security against data corruption or hardware failures.
+
+
+
+## [Trello Board Link](https://trello.com/invite/b/tE3trBbi/ATTIbb95b0b081ab551b82adcdada317d4b153D2B44D/team-builder)
+
 
 ### Daily Standups:
 
@@ -374,6 +418,11 @@ max_players. It also has a back populates 1 to many relationship with "leagues",
 ![trello 05](./docs/trello-board/trello_05.jpg)
 
 ### GitHub Commits:
+![github-commits-01](./docs/github-commits/github-commits-01.jpg)
+![github-commits-02](./docs/github-commits/github-commits-02.jpg)
+![github-commits-03](./docs/github-commits/github-commits-03.jpg)
+![github-commits-04](./docs/github-commits/github-commits-04.jpg)
+![github-commits-05](./docs/github-commits/github-commits-05.jpg)
 
 ---
 ### References
