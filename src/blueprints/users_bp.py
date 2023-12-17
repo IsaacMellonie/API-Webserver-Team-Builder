@@ -1,9 +1,9 @@
 from datetime import timedelta
 from flask_jwt_extended import create_access_token
-from flask import Blueprint, abort
-from models.user import User, UserSchema
+from flask import Blueprint
+from models.user import User, UserSchema, UserInputSchema
 from setup import bcrypt, db
-from sqlalchemy.exc import IntegrityError 
+from sqlalchemy.exc import IntegrityError, DataError 
 from flask import request
 from flask_jwt_extended import jwt_required
 from auth import admin_required, captain_required, user_id_required
@@ -29,7 +29,7 @@ users_bp = Blueprint("users", __name__, url_prefix="/users")
 # data integrity and key errors, ensuring unique email addresses 
 # and valid field inputs, enhancing security and data consistency 
 # in user management.
-@users_bp.route("/", methods=["POST"])
+@users_bp.route("/register", methods=["POST"])
 def register_user():
     try:
         # Parse incoming POST body through the schema
@@ -46,14 +46,13 @@ def register_user():
             bio=user_info.get("bio", ""),
             available=user_info.get("available"),
             phone=user_info.get("phone"),
-            team_id=user_info.get("team.id", 1),
         )
         # Add and commit the new user to the database
         db.session.add(user)
         # Return the new user
         db.session.commit()
         # Password is excluded from the returned data dump
-        return UserSchema(exclude=["password", "team"]).dump(user), 201 
+        return UserSchema(exclude=["password"]).dump(user), 201 
     except IntegrityError:
         return {"error": "Email address already exists"}, 409 # 409 is a conflict
     except KeyError:
@@ -135,7 +134,7 @@ def free_agents():
 def update_user(id):
     user_id_required(id)
     try:
-        user_info = UserSchema(exclude=["id", "admin", "date_created", 
+        user_info = UserInputSchema(exclude=["id", "admin", "date_created", 
                                         "captain"]).load(request.json)
         stmt = db.select(User).filter_by(id=id)
         user = db.session.scalar(stmt)
@@ -149,15 +148,17 @@ def update_user(id):
             user.bio = user_info.get("bio", user.bio)
             user.available = user_info.get("available", user.available)
             user.phone = user_info.get("phone", user.phone)
-            user.team_id = user_info.get("team_id.teams.id", user.team_id)
+            user.team_id = user_info.get("team_id", user.team_id)
             db.session.commit()
-            return UserSchema(exclude=["admin", "date_created",
-                                       "password", "team.league_id",
-                                       "team.users", "team.points" ]).dump(user)
+            return UserInputSchema(exclude=["admin", "date_created",
+                                       "password"]).dump(user)
         else:
             return {"error": "User not found"}, 404
     except IntegrityError:
         return {"error": "Email address already exists"}, 409 # 409 is a conflict
+    except DataError:
+        return {"error": "Phone number must be 10 digits or less"}
+
     
 
 # The delete_user function is secured with JWT and requiring admin 

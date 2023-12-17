@@ -1,7 +1,7 @@
 from setup import db, ma
 from datetime import date
 from marshmallow import fields
-from marshmallow.validate import Length, Regexp
+from marshmallow.validate import Length, Regexp, Range
 
 # User model is defined with fields for id, admin,
 # captain, date_created, first, last, dob, email, 
@@ -32,7 +32,7 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     bio = db.Column(db.String(200), default="Introduce yourself")
     available = db.Column(db.Boolean, default=True)
-    phone = db.Column(db.Integer())
+    phone = db.Column(db.BigInteger())
 
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
     #SQLAlchemy is used to access an instance of the Team model
@@ -64,7 +64,7 @@ class UserSchema(ma.Schema):
     bio = fields.String()
     
     available = fields.Boolean()
-    phone = fields.Integer(validate=lambda p: 10 <= len(str(p)))
+    phone = fields.Integer()
     email = fields.Email()
     
     password = fields.String(
@@ -82,4 +82,37 @@ class UserSchema(ma.Schema):
         fields = ("id", "admin", "captain", "date_created",
                   "first", "last", "dob", "email", "password",
                   "bio", "available", "phone", "team")
+        
+
+class UserInputSchema(ma.Schema):
+
+    admin = fields.Boolean()
+    captain = fields.Boolean()
+    date_created = fields.Date()
+    dob = fields.Date()
+    first = fields.String(
+        validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+    last = fields.String(
+        validate=Regexp("^[a-zA-Z ]+$", error="Must only contain letters and spaces."))
+    bio = fields.String()
+    available = fields.Boolean()
+    phone = fields.Integer()
+    email = fields.Email()
+    password = fields.String(
+        validate=[Length(min=6, max=12), 
+        Regexp(r".*[A-Z].*", error="Password must contain at least one uppercase letter"),
+        Regexp(r".*[a-z].*", error="Password must contain at least one lowercase letter"),
+        Regexp(r".*[@#$%!^&+=].*", error="Password must contain at least one special character")
+        ])
+    
+    team_id = fields.Integer()
+
+    # Here the "team" db.relationship needs to be defined so that
+    # marshmallow can nest the data.
+    # team = fields.Nested("TeamSchema", exclude=["date_created", "win", "loss", "draw"])
+
+    class Meta:
+        fields = ("id", "admin", "captain", "date_created",
+                  "first", "last", "dob", "email", "password",
+                  "bio", "available", "phone", "team_id")
         

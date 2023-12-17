@@ -125,29 +125,53 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 ---
 ### R5 Document all endpoints for your API
 
-Sport:
-- POST create sport (admin)
-- PUT update sport (admin)
-- DELETE sport (admin)
+### Sport
 
-League:
-- POST create league (admin)
-- PUT update league (admin)
-- DELETE league (admin)
+### POST Create Sport (admin)
+![Post Create Sport](./docs/endpoints/sports-register-sport.jpg)
 
-User:
-- UPDATE user (user)
-- CREATE user (user)
-- POST user sign-in (user)
+### PUT Update Sport (admin)
+![Put Update Sport](./docs/endpoints/sports-update-sport.jpg)
 
-Team:
-- PUT update team rank (admin)
-- POST user to team (captain)
-- PATCH user starting (captain)
-- DELETE user (captain)
-- GET team users (captain)
-- GET starting users (captain)
-- GET single user (captain)
+### DELETE Sport (admin)
+![Delete Sport](./docs/endpoints/sports-update-sport.jpg)
+
+### League
+### POST Create League (admin)
+![Post League](./docs/endpoints/leagues-register-league.jpg)
+
+### PUT Update League (admin)
+![Update League](./docs/endpoints/leagues-update-league.jpg)
+
+### DELETE League (admin)
+![Delete League](./docs/endpoints/leagues-delete-league.jpg)
+
+### User
+
+### UPDATE User
+![Update User](./docs/endpoints/users-update-user.jpg)
+
+### PUT/PATCH Register User
+![Resgister User](./docs/endpoints/users-update-user.jpg)
+
+### POST User Login
+![User Login](./docs/endpoints/users-login.jpg)
+
+### GET Captains
+![Get Captains](./docs/endpoints/users-get-captains.jpg)
+
+### GET Free Agents
+![Get Free Agents](./docs/endpoints/users-get-free-agents.jpg)
+
+### DELETE User 
+![Delete User](./docs/endpoints/users-delete-user.jpg)
+
+### Team
+### PUT update team rank (admin)
+### POST user to team (captain)
+### PATCH user starting (captain)
+### DELETE user (captain)
+
 
 ---
 ### R6 An ERD for your app
