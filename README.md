@@ -127,51 +127,154 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ### Sport
 
-### POST Create Sport (admin)
+### /sports
+- HTTP Request Verb: POST
+- Required Data: name, max_players
+- Expected Response: "201 CREATED" 
+- Authentication Methods: Admin must be true.
+- Description: Allow an Admin to create a sport. Store the update in the database.
+
 ![Post Create Sport](./docs/endpoints/sports-register-sport.jpg)
 
-### PUT Update Sport (admin)
+### /sports/id
+- HTTP Request Verb: PUT
+- Required Data: name, max_players
+- Expected Response: "200 OK" Update successful
+- Authentication Methods: Admin must be true.
+- Description: Allow an Admin to update a sport. Store the update in the database.
+
 ![Put Update Sport](./docs/endpoints/sports-update-sport.jpg)
 
-### DELETE Sport (admin)
-![Delete Sport](./docs/endpoints/sports-update-sport.jpg)
+### /sports/id
+- HTTP Request Verb: DELETE
+- Required Data: id
+- Expected Response: "200 OK"
+- Authentication Methods: Admin must be true.
+- Description: Allow an Admin to delete a sport. Store the update in the database.
+
+![Delete Sport](./docs/endpoints/sports-delete-sport.jpg)
 
 ### League
-### POST Create League (admin)
+### /leagues
+- HTTP Request Verb: POST
+- Required Data: name, start_date, end_date, sport
+- Expected Response: "201 CREATED"
+- Authentication Methods: Admin must be true.
+- Description: Allow an Admin to create a league. Store the update in the database.
+
 ![Post League](./docs/endpoints/leagues-register-league.jpg)
 
-### PUT Update League (admin)
+### /leagues/id 
+- HTTP Request Verb: PUT
+- Required Data: name, start_date, end_date, sport
+- Expected Response: "200 OK"
+- Authentication Methods: Admin must be true.
+- Description: Allow an Admin to update a league. Store the update in the database.
+
 ![Update League](./docs/endpoints/leagues-update-league.jpg)
 
-### DELETE League (admin)
+### /leagues/id
+- HTTP Request Verb: DELETE
+- Required Data: id
+- Expected Response: "200 OK"
+- Authentication Methods: Admin must be true.
+- Description: Allow an Admin to delete a league from the database.
+
 ![Delete League](./docs/endpoints/leagues-delete-league.jpg)
 
-### User
+### Users
 
-### UPDATE User
+### /users/id
+- HTTP Request Verb: PUT
+- Required Data: first, last, dob, email, password, bio, available, phone, team_id
+- Expected Response: "200 OK"
+- Authentication Methods: user_id must match id in URI. 
+- Description: Allow a user to update their information. Store the update in the database.
+
 ![Update User](./docs/endpoints/users-update-user.jpg)
 
-### PUT/PATCH Register User
-![Resgister User](./docs/endpoints/users-update-user.jpg)
+### /users/register
+- HTTP Request Verb: POST
+- Required Data: captain, first, last, dob, email, password, bio, available, phone
+- Expected Response: "201 CREATED"
+- Authentication Methods: none
+- Description: Allow a user to create a profile. Store the update in the database.
 
-### POST User Login
+![Resgister User](./docs/endpoints/users-register.jpg)
+
+### /users/login
+- HTTP Request Verb: POST
+- Required Data: captain, first, last, dob, email, password, bio, available, phone
+- Expected Response: "200 OK"
+- Authentication Methods: JWT Authentication
+- Description: Allow a user to login.
+
 ![User Login](./docs/endpoints/users-login.jpg)
 
-### GET Captains
+### /users/captains
+- HTTP Request Verb: GET
+- Required Data: none
+- Expected Response: "200 OK"
+- Authentication Methods: JWT Authentication
+- Description: Allow a user to check all captain users.
+
 ![Get Captains](./docs/endpoints/users-get-captains.jpg)
 
-### GET Free Agents
+### /users/freeagents
+- HTTP Request Verb: GET
+- Required Data: none
+- Expected Response: "200 OK"
+- Authentication Methods: JWT Authentication
+- Description: Allow a user to check all free agent users.
+
 ![Get Free Agents](./docs/endpoints/users-get-free-agents.jpg)
 
-### DELETE User 
+### users/id
+- HTTP Request Verb: DELETE
+- Required Data: id in URI
+- Expected Response: "200 OK"
+- Authentication Methods: Admin must be true
+- Description: Allow a an admin level user to delete a user.
+
 ![Delete User](./docs/endpoints/users-delete-user.jpg)
 
 ### Team
-### PUT update team rank (admin)
-### POST user to team (captain)
-### PATCH user starting (captain)
-### DELETE user (captain)
 
+### /teams
+- HTTP Request Verb: GET
+- Required Data: none
+- Expected Response: "200 OK"
+- Authentication Methods: JWT Authentication
+- Description: Allow a user to see all teams.
+
+![Update Team](./docs/endpoints/teams-get-teams.jpg)
+
+### /teams/id
+- HTTP Request Verb: GET
+- Required Data: id in URI
+- Expected Response: "200 OK"
+- Authentication Methods: JWT Authentication
+- Description: Allow a user to see a team.
+
+![Update Team](./docs/endpoints/teams-get-team.jpg)
+
+### /teams
+- HTTP Request Verb: POST
+- Required Data: id in URI, team_name
+- Expected Response: "201 CREATED"
+- Authentication Methods: none
+- Description: Allow a user to register team.
+
+![Create Team](./docs/endpoints/teams-register-team.jpg)
+
+### /teams/id
+- HTTP Request Verb: PUT
+- Required Data: id in URI. team_name, points, win, loss, draw, league
+- Expected Response: "200 OK"
+- Authentication Methods: Must be an admin or team captain.
+- Description: Allow a user to update team.
+
+![Update Team](./docs/endpoints/teams-update-team.jpg)
 
 ---
 ### R6 An ERD for your app

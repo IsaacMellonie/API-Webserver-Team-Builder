@@ -25,7 +25,7 @@ teams_bp = Blueprint("teams", __name__, url_prefix="/teams")
 # fields. The function returns a JSON response containing the 
 # serialized list of teams, providing a user-friendly and efficient 
 # way to access comprehensive team information within the application.
-@teams_bp.route("/teams")
+@teams_bp.route("/")
 @jwt_required()
 def all_teams():
     stmt = db.select(Team).order_by(Team.team_name.asc())
