@@ -18,7 +18,7 @@
 - FLASK_DEBUG=true
 - Create a JWT sign-in key e.g. "jwt_key"
 - Set the DB_URI connection string
-- Open Insomnia and use http://127.0.0.1:5550
+- Open Insomnia and use http://127.0.0.1:5550 as port 5550 is set as default in .flaskenv.sample
 
 ---
 ### R1 Problem Identification
