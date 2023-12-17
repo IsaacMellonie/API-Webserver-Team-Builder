@@ -127,7 +127,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ### Sport
 
-### /sports
+### 1. /sports
 - HTTP Request Verb: POST
 - Required Data: name, max_players
 - Expected Response: "201 CREATED" 
@@ -136,7 +136,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Post Create Sport](./docs/endpoints/sports-register-sport.jpg)
 
-### /sports/id
+### 2. /sports/id
 - HTTP Request Verb: PUT
 - Required Data: name, max_players
 - Expected Response: "200 OK" Update successful
@@ -145,7 +145,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Put Update Sport](./docs/endpoints/sports-update-sport.jpg)
 
-### /sports/id
+### 3. /sports/id
 - HTTP Request Verb: DELETE
 - Required Data: id
 - Expected Response: "200 OK"
@@ -154,8 +154,17 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Delete Sport](./docs/endpoints/sports-delete-sport.jpg)
 
-### League
-### /leagues
+### 4. /sports/id
+- HTTP Request Verb: GET
+- Required Data: id
+- Expected Response: "200 OK"
+- Authentication Methods: JWT Required
+- Description: Allow a user to get a sport.
+
+![Delete Sport](./docs/endpoints/sports-get-sport.jpg)
+
+### Leagues
+### 5. /leagues
 - HTTP Request Verb: POST
 - Required Data: name, start_date, end_date, sport
 - Expected Response: "201 CREATED"
@@ -164,7 +173,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Post League](./docs/endpoints/leagues-register-league.jpg)
 
-### /leagues/id 
+### 6. /leagues/id 
 - HTTP Request Verb: PUT
 - Required Data: name, start_date, end_date, sport
 - Expected Response: "200 OK"
@@ -173,7 +182,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Update League](./docs/endpoints/leagues-update-league.jpg)
 
-### /leagues/id
+### 7. /leagues/id
 - HTTP Request Verb: DELETE
 - Required Data: id
 - Expected Response: "200 OK"
@@ -182,9 +191,18 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Delete League](./docs/endpoints/leagues-delete-league.jpg)
 
+### 8. /leagues/id
+- HTTP Request Verb: GET
+- Required Data: id in URI
+- Expected Response: "200 OK"
+- Authentication Methods: Admin must be true.
+- Description: Allow an Admin to find a league from the database.
+
+![Delete League](./docs/endpoints/leagues-get-league.jpg)
+
 ### Users
 
-### /users/id
+### 9. /users/id
 - HTTP Request Verb: PUT
 - Required Data: first, last, dob, email, password, bio, available, phone, team_id
 - Expected Response: "200 OK"
@@ -193,25 +211,26 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Update User](./docs/endpoints/users-update-user.jpg)
 
-### /users/register
+### 10. /users/register
 - HTTP Request Verb: POST
 - Required Data: captain, first, last, dob, email, password, bio, available, phone
 - Expected Response: "201 CREATED"
-- Authentication Methods: none
-- Description: Allow a user to create a profile. Store the update in the database.
+- Authentication Methods: None required at registration. Passwords will be encrypted using hash encryption with bcrypt.
+- Description: Allow a user to create a profile. Store the update in the database. 
 
 ![Resgister User](./docs/endpoints/users-register.jpg)
 
-### /users/login
+### 11. /users/login
 - HTTP Request Verb: POST
 - Required Data: captain, first, last, dob, email, password, bio, available, phone
 - Expected Response: "200 OK"
 - Authentication Methods: JWT Authentication
-- Description: Allow a user to login.
+- Description: Allow a user to login if the email and password match the stored credentials.
+IF there's a match, a JWT token will be generated allowing a user to use the app.
 
 ![User Login](./docs/endpoints/users-login.jpg)
 
-### /users/captains
+### 12. /users/captains
 - HTTP Request Verb: GET
 - Required Data: none
 - Expected Response: "200 OK"
@@ -220,7 +239,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Get Captains](./docs/endpoints/users-get-captains.jpg)
 
-### /users/freeagents
+### 13. /users/freeagents
 - HTTP Request Verb: GET
 - Required Data: none
 - Expected Response: "200 OK"
@@ -229,18 +248,18 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Get Free Agents](./docs/endpoints/users-get-free-agents.jpg)
 
-### users/id
+### 14. /users/id
 - HTTP Request Verb: DELETE
 - Required Data: id in URI
 - Expected Response: "200 OK"
 - Authentication Methods: Admin must be true
-- Description: Allow a an admin level user to delete a user.
+- Description: Allow an admin level user to delete a user from the database.
 
 ![Delete User](./docs/endpoints/users-delete-user.jpg)
 
-### Team
+### Teams
 
-### /teams
+### 15. /teams
 - HTTP Request Verb: GET
 - Required Data: none
 - Expected Response: "200 OK"
@@ -249,7 +268,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Update Team](./docs/endpoints/teams-get-teams.jpg)
 
-### /teams/id
+### 16. /teams/id
 - HTTP Request Verb: GET
 - Required Data: id in URI
 - Expected Response: "200 OK"
@@ -258,7 +277,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Update Team](./docs/endpoints/teams-get-team.jpg)
 
-### /teams
+### 17. /teams
 - HTTP Request Verb: POST
 - Required Data: id in URI, team_name
 - Expected Response: "201 CREATED"
@@ -267,7 +286,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ![Create Team](./docs/endpoints/teams-register-team.jpg)
 
-### /teams/id
+### 18. /teams/id
 - HTTP Request Verb: PUT
 - Required Data: id in URI. team_name, points, win, loss, draw, league
 - Expected Response: "200 OK"
@@ -278,6 +297,7 @@ https://www.theserverside.com/definition/object-relational-mapping-ORM
 
 ---
 ### R6 An ERD for your app
+Here is the ERD for my API. I didn't settle on a final draft until a few days into coding. It was a setback to the whole process, but getting this correct was critical for the development of the api. Taking time to set the foundations of all the entitiy relationship proved to be critical in moving ahead with the rest of the API. I initally created a ladder table to store all team information like points, win, loss,, draw. This would have taken up valuable data in the database. All of the these details are now stored with each team in the "teams" entity.
 
 ![Pickup Team Builder](./docs/Pickup_Team_Builder.png)
 
@@ -301,7 +321,27 @@ JWT Manager adds support for JSON Web Tokens (JWTs) with the Flask app. It handl
 
 ---
 ### R8 Describe your projects models in terms of the relationships they have with each other
+### User Model
+- The user model contains the most data out of any of the entities. It's the cornerstone of the app as one of the goals of th eapplication is to eventually provide a social aspect to the app which will allow users to share information. New users can register and create an account to use the app. The model provides the important contact information critical for team captains and admins to send out notifications and updates about the league such as updates to the ladder.
+The user has a many to one relationship with "teams", storing the foreign key of the team that they're associated with.
 
+![users-model](./docs/models/users-model.jpg)
+
+### Team Model
+- The "Team" model stores any information about the team. Admins can update the team information such as points, win, loss, and draw. Users share a back_populates relationship with the team model that allows retrieval of user info. It also has a back_populates relationship with the League model that allows entitiy relationships. 
+
+![teams-model](./docs/models/teams-model.jpg)
+
+### League Model
+- The League Model contains the id, name, start_date, end_date, and sport columns. As well as a back_populates relationship with teams. The sport_id creates a back_populates relationship with Leages model.
+
+![leagues-model](./docs/models/leagues-model.jpg)
+
+### Sport Model
+
+- The Sport model creates the upper most entitiy. It has a parent relationship with the League Model that flows down to Team and User. the Sport model stores columns such as id(pk), name, max_players, as well as a db.relationship with leagues. 
+
+![sports-model](./docs/models/sports-model.jpg)
 ---
 ### R9 Discuss the database relations to be implemented in your application
 
@@ -309,11 +349,12 @@ In Team Builder, I’ve created a relational database named **“teamup”**. It
 
 **Users:** The “users” table stores personal information, relationships with other entities, and important data types which allow the system to determine levels of user access and interactivity.
 
-**Teams:** The “teams” table forms the fundamental relationship with nearly all other database tables. It unifies users to form teams, while also forming important relationships with the front-end interface. It contains id, name, registered, and date_created. The “teams” table acts as a join-table. Outgoing data for “team_name” is shared with the “users” table. It also forms outgoing connections with the “ladders” table by providing “rank” and “team_name” 
+**Teams:** The “teams” table forms the fundamental relationship with nearly all other database tables. It unifies users to form teams, while also forming important relationships with the front-end interface. The “teams” table acts as a join-table. Outgoing data for “team_name” is shared with the “users” table. It also forms outgoing connections with the “ladders” table by providing important data such as points, win, loss, draw which will be useful for creatin a league ladder for users to see. 
 
 **Leagues:** The “leagues” table stores data containing the id, name, start_date, end_date, and (fk) sport_id. It establishes the relationship between “Ladders” and “Teams” to form a midpoint for league-specific information.
 
-**Ladders:** The “Ladders” table represents the positions for teams within a specific league. It contains id, league, teams, and positions for all teams. 
+**Sports:** The "Sports" table contains 3 columns: a primary key id, name(e.g. "tennis"), and
+max_players. It also has a back populates 1 to many relationship with "leagues", which allows access to any league that has the sport id associated with the id coloumn. This relationship is important for accessing data about leagues while accessing sport.
 
 ---
 ### R10 Describe the way tasks are allocated and tracked in your project
@@ -329,6 +370,8 @@ In Team Builder, I’ve created a relational database named **“teamup”**. It
 ![trello 01](./docs/trello-board/trello_01.jpg)
 ![trello 02](./docs/trello-board/trello_02.jpg)
 ![trello 03](./docs/trello-board/trello_03.jpg)
+![trello 04](./docs/trello-board/trello_04.jpg)
+![trello 05](./docs/trello-board/trello_05.jpg)
 
 ### GitHub Commits:
 
