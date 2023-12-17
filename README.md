@@ -1,6 +1,8 @@
-# API Webserver Project
-## TeamUp Team Builder
+# API Webserver Project - Team Builder
 
+### [GitHub Repository Link](https://github.com/IsaacMellonie/API-Webserver-Team-Builder)
+
+---
 ### Installation and Setup
 
 #### Run WSL and enter the following commands:
